@@ -19,13 +19,13 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "CAN.h"
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+#include "NRF24L01.h"
+#include "string.h"
+#include "CAN.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -50,6 +50,8 @@ FDCAN_HandleTypeDef hfdcan1;
 
 UART_HandleTypeDef hlpuart1;
 
+SPI_HandleTypeDef hspi1;
+
 TIM_HandleTypeDef htim2;
 
 /* USER CODE BEGIN PV */
@@ -59,19 +61,30 @@ TIM_HandleTypeDef htim2;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_LPUART1_UART_Init(void);
 static void MX_FDCAN1_Init(void);
 static void MX_TIM2_Init(void);
+static void MX_SPI1_Init(void);
+static void MX_LPUART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 uint8_t Rxdata[8]; // buffer to store recieved frame
-uint8_t DataToSend[96]; // buffer to upload to radio
-uint8_t TxData[8] = {'a','b','c','d','e','f','g','h'}; //Test data
-bool BufferFull = 0;
+uint8_t DataToSend[63]; // buffer to upload to radio
+
+uint8_t TxData[8] = {'a','a','a','a','a','a','a','a'}; //Test data
+uint8_t TxData2[8] = {'b','b','b','b','b','b','b','b'}; //Test data
+
+uint8_t MsReady = 0;
+
+uint8_t text[]=  "transmiting...";
+uint8_t text2[]=  "Error while sending";
+uint8_t pauza[] = "\n \r";
+
+uint8_t TxAddress[] = {0xEE,0xDD,0xCC,0xBB,0xAA};
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-time_t t;
+
 /* USER CODE END 0 */
 
 /**
@@ -81,7 +94,7 @@ time_t t;
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  srand((unsigned) time(&t));
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -102,13 +115,17 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_LPUART1_UART_Init();
   MX_FDCAN1_Init();
   MX_TIM2_Init();
+  MX_SPI1_Init();
+  MX_LPUART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
-HAL_FDCAN_Start(&hfdcan1); //Start CAN Protocol
-HAL_FDCAN_ActivateNotification(&hfdcan1, FDCAN_IT_GROUP_RX_FIFO0, FDCAN_TX_BUFFER0); // Activate interrupt notifications
+  NRF24_Init();
+  NRF24_TxMode(TxAddress, 10);
+
+  HAL_FDCAN_Start(&hfdcan1); //Start CAN Protocol
+  HAL_FDCAN_ActivateNotification(&hfdcan1, FDCAN_IT_GROUP_RX_FIFO0, FDCAN_TX_BUFFER0); // Activate interrupt notifications
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -116,18 +133,42 @@ HAL_FDCAN_ActivateNotification(&hfdcan1, FDCAN_IT_GROUP_RX_FIFO0, FDCAN_TX_BUFFE
   while (1)
   {
     /* USER CODE END WHILE */
-
     /* USER CODE BEGIN 3 */
-	  if(BufferFull == true)
+	  if(MsReady == 0xff)
 	  {
-		  //Send data via radio
+		  if (NRF24_Transmit(DataToSend) == 1)// Send data via radio.
+		  {
+			  MsReady = 0;
+			  HAL_UART_Transmit(&hlpuart1, &DataToSend, strlen((char *)DataToSend), 1000);
+			  HAL_UART_Transmit(&hlpuart1, &pauza, strlen((char *)pauza), 1000);
+		  }
+		  else
+		  {
+			  HAL_UART_Transmit(&hlpuart1, text2, strlen((char *)text2),1000);
+		  }
 	  }
 	  else
 	  {
-		  CAN1_TX(); //Send test data through CAN. USE ONLY TO TEST, IN LOOPBACK MODE.
-		  HAL_Delay(250);
+		 CAN1_TX(0x0A, &TxData);
+		 HAL_Delay(1);
+		 CAN1_TX(0x0B, &TxData2);
+		 HAL_Delay(1);
+		 CAN1_TX(0x0C, &TxData);
+		 HAL_Delay(1);
+		 CAN1_TX(0x0D, &TxData2);
+		 HAL_Delay(1);
+		 CAN1_TX(0x0E, &TxData);
+		 HAL_Delay(1);
+		 CAN1_TX(0x0F, &TxData2);
+		 HAL_Delay(1);
+		 CAN1_TX(0x60, &TxData);
+		 HAL_Delay(1);
+		 CAN1_TX(0x5F, &TxData2);
+		 HAL_Delay(1);
+		 CAN1_TX(0x5B, &TxData);
+		 HAL_Delay(100);
 	  }
- }
+  }
   /* USER CODE END 3 */
 }
 
@@ -287,6 +328,46 @@ static void MX_LPUART1_UART_Init(void)
 }
 
 /**
+  * @brief SPI1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_SPI1_Init(void)
+{
+
+  /* USER CODE BEGIN SPI1_Init 0 */
+
+  /* USER CODE END SPI1_Init 0 */
+
+  /* USER CODE BEGIN SPI1_Init 1 */
+
+  /* USER CODE END SPI1_Init 1 */
+  /* SPI1 parameter configuration*/
+  hspi1.Instance = SPI1;
+  hspi1.Init.Mode = SPI_MODE_MASTER;
+  hspi1.Init.Direction = SPI_DIRECTION_2LINES;
+  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
+  hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
+  hspi1.Init.NSS = SPI_NSS_SOFT;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
+  hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
+  hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
+  hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+  hspi1.Init.CRCPolynomial = 7;
+  hspi1.Init.CRCLength = SPI_CRC_LENGTH_DATASIZE;
+  hspi1.Init.NSSPMode = SPI_NSS_PULSE_ENABLE;
+  if (HAL_SPI_Init(&hspi1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN SPI1_Init 2 */
+
+  /* USER CODE END SPI1_Init 2 */
+
+}
+
+/**
   * @brief TIM2 Initialization Function
   * @param None
   * @retval None
@@ -347,7 +428,10 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : B1_Pin */
   GPIO_InitStruct.Pin = B1_Pin;
@@ -355,12 +439,19 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : LD2_Pin */
-  GPIO_InitStruct.Pin = LD2_Pin;
+  /*Configure GPIO pin : PC7 */
+  GPIO_InitStruct.Pin = GPIO_PIN_7;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PB6 */
+  GPIO_InitStruct.Pin = GPIO_PIN_6;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
   HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);

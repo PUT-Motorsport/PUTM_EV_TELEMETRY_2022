@@ -219,22 +219,23 @@ uint8_t NRF24_Transmit (uint8_t *data)
 	uint8_t cmdtosend = 0;
 
 	// select the device
-	CS_Select();
-	nrf24_ReadReg(FIFO_STATUS);
-	nrf24_ReadReg(STATUS);
-	nrf24_ReadReg(CONFIG);
+ 	//CS_Select();
+	//nrf24_ReadReg(FIFO_STATUS);
+	//nrf24_ReadReg(STATUS);
+	//nrf24_ReadReg(CONFIG);
 	CS_Select();
 	// payload command
 	cmdtosend = W_TX_PAYLOAD;
 	HAL_SPI_Transmit(NRF24_SPI, &cmdtosend, 1, 100);
 
 	// send the payload
-	HAL_SPI_Transmit(NRF24_SPI, data, 32, 1000);
+	HAL_SPI_Transmit(NRF24_SPI, data, 63, 100);
 	CE_Enable();
 	// Unselect the device
 	CS_UnSelect();
 
 	HAL_Delay(1);
+
 
 	uint8_t fifostatus = nrf24_ReadReg(FIFO_STATUS);
 

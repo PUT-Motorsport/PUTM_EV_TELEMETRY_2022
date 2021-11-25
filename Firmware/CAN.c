@@ -13,7 +13,13 @@ extern uint8_t DataToSend[63];
 extern uint8_t MsReady;
 
 uint16_t flag_buffer = 0;
-
+/**
+  * @brief RxFifo0 callback function. Called when new data arrives in RxFifo0
+  * @param hfdcan pointer to an FDCAN_HandleTypeDef structure that contains
+  *        the configuration information for the specified FDCAN.
+  * @param  RxFifo0ITs indicates which Rx FIFO 0 interrupts are signalled.
+  * @retval None
+  */
 __weak void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan1, uint32_t RxFifo0ITs)
 {
   /* Prevent unused argument(s) compilation warning */
@@ -29,7 +35,12 @@ __weak void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan1, uint32_t RxF
 	  //Error_Handler();
   }
 }
-
+/*
+ * @brief This function is called after receiving CAN message. Function matches CAN frames with correspondig
+ 	  spot in DataToSend buffer.
+ * @param pointer to the data buffer where newly receivd message is being stored.    
+ * @retval None
+ */
 void BuildMessageAll(uint8_t Rxdata[])
 {
 	if(RxHeader_FDCAN1.Identifier == 0x0A)// APPS
@@ -112,13 +123,19 @@ void BuildMessageAll(uint8_t Rxdata[])
 				DataToSend[i] = Rxdata[i-63];
 			}
 		}
-		//SEND
-		if(flag_buffer >= 30)
+		if(flag_buffer >= 255)//if all messages are in place, send info that we want to send message.
 		{
+			//here we are gonna need to suspend RxFifo0 Callbacks to ensure transmission.
 			MsReady = 0xff;
 			flag_buffer = 0;
 		}
 }
+/*
+ * @brief This is a test function used to create some random frame for testing.
+ * @param CAN frame ID
+ * @param  pointer to the data buffer
+ * @retval None
+ */
 void CAN1_TX(uint16_t ID, uint8_t *data)//Test Function
 {
 	TxHeader_FDCAN1.DataLength = FDCAN_DLC_BYTES_8;
@@ -139,28 +156,5 @@ void CAN1_TX(uint16_t ID, uint8_t *data)//Test Function
 
 
 	}
-}
-void Send_Frame(uint8_t ID, uint8_t *data[])
-{
-	TxHeader_FDCAN1.DataLength = FDCAN_DLC_BYTES_8;
-	TxHeader_FDCAN1.Identifier = ID;
-	TxHeader_FDCAN1.IdType = FDCAN_STANDARD_ID;
-	TxHeader_FDCAN1.TxFrameType = FDCAN_DATA_FRAME;
-	TxHeader_FDCAN1.ErrorStateIndicator = FDCAN_ESI_ACTIVE;
-	TxHeader_FDCAN1.BitRateSwitch = FDCAN_BRS_OFF;
-	TxHeader_FDCAN1.FDFormat = FDCAN_CLASSIC_CAN;\
-	TxHeader_FDCAN1.TxEventFifoControl = FDCAN_NO_TX_EVENTS;
-	TxHeader_FDCAN1.MessageMarker = 0;
-	if(HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan1, &TxHeader_FDCAN1, &data) != HAL_OK)
-	{
-		//Error_Handler();
-	}
-	else
-	{
-
-
-	}
-
-
 }
 

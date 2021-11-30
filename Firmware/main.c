@@ -68,11 +68,10 @@ static void MX_SPI1_Init(void);
 static void MX_LPUART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 uint8_t Rxdata[8]; // buffer to store recieved frame
-//uint8_t DataToSend[26]; // buffer to upload to radio
 
-uint8_t DataBuffer1[32];
-uint8_t DataBuffer2[32];
-uint8_t DataBuffer3[32];
+uint8_t DataBuffer1[32];//Message buffer1
+uint8_t DataBuffer2[32];//Message buffer2
+uint8_t DataBuffer3[32];//Message buffer3
 
 uint8_t TxData[8] =  {0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07}; //Test data1
 uint8_t TxData2[8] = {0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F}; //Test data2
@@ -84,21 +83,28 @@ uint8_t TxData7[8] = {0x30,0x31,0x32,0x33,0x34,0x35,0x36,0x37}; //Test data7
 uint8_t TxData8[8] = {0x38,0x39,0x3A,0x3B,0x3C,0x3D,0x3E,0x3F}; //Test data8
 uint8_t TxData9[8] = {0x40,0x41,0x42,0x43,0x44,0x45,0x46,0x47}; //Test data9
 
-uint8_t MsReady = 0;
-uint8_t TIMIRQ = 0;
-uint8_t text[] = "Timer IRQ";
-uint8_t text2[]=  "Error while sending";
-uint8_t pauza[] = "\n \r";
-uint8_t space[] = " ";
+uint8_t MsReady = 0;//Value indicating that data packet is ready and can be sendt.
+uint8_t TIMIRQ = 0;//Value indicating that data packet could not be finished. Packet will be forced to send after desired period.
+uint8_t text[]  = "Timer IRQ";			//text's to debug
+uint8_t text2[] =  "Error while sending";	//
+uint8_t pauza[] = "\n \r";			//
+uint8_t space[] = " ";				//
 
-char msg[2];
+char msg[2];// buffer for uart display.
 
-uint8_t TxAddress[] = {0xEE,0xDD,0xCC,0xBB,0xAA};
+uint8_t TxAddress[] = {0xEE,0xDD,0xCC,0xBB,0xAA};//Adress of the Radio module.
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+/**
+ * @brief  Function to display data in serial monitor. Used only for debug.
+ *
+ * @param  Pointer to a 32 byte long message buffer (there are three messages in one packet).
+ *
+ * @retval None
+ */
 void DisplayData(uint8_t *data)
 {
 	for(int i = 0; i<32; i++)
@@ -112,6 +118,12 @@ void DisplayData(uint8_t *data)
 	HAL_UART_Transmit(&hlpuart1, pauza, strlen((char *)pauza), 1000);
 	HAL_UART_Transmit(&hlpuart1, pauza, strlen((char *)pauza), 1000);
 }
+/**
+ * @brief  Function to send packet through radio. Three messages are being send independently but in a short
+ * 	   intervals. Same 'send function' is being used for normal mode and time trigger mode.
+ *
+ * @retval None
+ */
 void SendDataWhenComplete(void)
 {
 	MsReady = 0;
@@ -143,6 +155,12 @@ void SendDataWhenComplete(void)
 	HAL_UART_Transmit(&hlpuart1, pauza, strlen((char *)pauza), 1000);
 	HAL_FDCAN_Start(&hfdcan1);
 }
+/**
+ * @brief Callback from timer. When given amount of time will pass, and no new packet will be send,
+ * timer will trigger a SendDataWhenComplete() and send packet without missing data.
+ * 	   
+ * @retval None
+ */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)//Przerwanie Awaryjne
 {
 	HAL_UART_Transmit(&hlpuart1, text, strlen((char *)text), 1000);
@@ -204,14 +222,14 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  if(MsReady == 0xff)
+	  if(MsReady == 0xff)//Normal Mode
 	  {
 		  HAL_TIM_Base_Stop(&htim2);//Added reseting code line in stm32g4xx_hal_tim.c
 		  SendDataWhenComplete();
 		  HAL_Delay(100);
 		  HAL_TIM_Base_Start(&htim2);
 	  }
-	  else if(TIMIRQ == 0xff)
+	  else if(TIMIRQ == 0xff)// Time trigger Mode
 	  {
 		  HAL_TIM_Base_Stop(&htim2);//Added reseting code line in stm32g4xx_hal_tim.c
 		  SendDataWhenComplete();
@@ -219,7 +237,7 @@ int main(void)
 		  HAL_Delay(100);
 		  HAL_TIM_Base_Start(&htim2);
 	  }
-	  else
+	  else//Simulation of recieving frames from CAN bus.
 	  {
 		 CAN1_TX(0x0A, &TxData);
 		 HAL_Delay(1);

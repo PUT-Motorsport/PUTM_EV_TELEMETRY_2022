@@ -214,7 +214,7 @@ void NRF24_TxMode (uint8_t *Address, uint8_t channel)
 
 // transmit the data
 
-uint8_t NRF24_Transmit (uint8_t *data)
+uint8_t NRF24_Transmit (uint8_t *data1)
 {
 	uint8_t cmdtosend = 0;
 
@@ -227,15 +227,14 @@ uint8_t NRF24_Transmit (uint8_t *data)
 	// payload command
 	cmdtosend = W_TX_PAYLOAD;
 	HAL_SPI_Transmit(NRF24_SPI, &cmdtosend, 1, 100);
-
 	// send the payload
-	HAL_SPI_Transmit(NRF24_SPI, data, 63, 100);
+	HAL_SPI_Transmit(NRF24_SPI, data1, 32, 1000);
+
+
 	CE_Enable();
 	// Unselect the device
 	CS_UnSelect();
-
 	HAL_Delay(1);
-
 
 	uint8_t fifostatus = nrf24_ReadReg(FIFO_STATUS);
 
@@ -250,7 +249,6 @@ uint8_t NRF24_Transmit (uint8_t *data)
 
 		return 1;
 	}
-
 	return 0;
 }
 

@@ -26,6 +26,7 @@
 #include "NRF24L01.h"
 #include "string.h"
 #include "CAN.h"
+#include "stdio.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -67,16 +68,30 @@ static void MX_SPI1_Init(void);
 static void MX_LPUART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 uint8_t Rxdata[8]; // buffer to store recieved frame
-uint8_t DataToSend[63]; // buffer to upload to radio
+//uint8_t DataToSend[26]; // buffer to upload to radio
 
-uint8_t TxData[8] = {'a','a','a','a','a','a','a','a'}; //Test data
-uint8_t TxData2[8] = {'b','b','b','b','b','b','b','b'}; //Test data
+uint8_t DataBuffer1[32];
+uint8_t DataBuffer2[32];
+uint8_t DataBuffer3[32];
+
+uint8_t TxData[8] =  {0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07}; //Test data1
+uint8_t TxData2[8] = {0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F}; //Test data2
+uint8_t TxData3[8] = {0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17}; //Test data3
+uint8_t TxData4[8] = {0x18,0x19,0x1A,0x1B,0x1C,0x1D,0x1E,0x1F}; //Test data4
+uint8_t TxData5[8] = {0x20,0x21,0x22,0x23,0x24,0x25,0x26,0x27}; //Test data5
+uint8_t TxData6[8] = {0x28,0x29,0x2A,0x2B,0x2C,0x2D,0x2E,0x2F}; //Test data6
+uint8_t TxData7[8] = {0x30,0x31,0x32,0x33,0x34,0x35,0x36,0x37}; //Test data7
+uint8_t TxData8[8] = {0x38,0x39,0x3A,0x3B,0x3C,0x3D,0x3E,0x3F}; //Test data8
+uint8_t TxData9[8] = {0x40,0x41,0x42,0x43,0x44,0x45,0x46,0x47}; //Test data9
 
 uint8_t MsReady = 0;
-
-uint8_t text[]=  "transmiting...";
+uint8_t TIMIRQ = 0;
+uint8_t text[] = "Timer IRQ";
 uint8_t text2[]=  "Error while sending";
 uint8_t pauza[] = "\n \r";
+uint8_t space[] = " ";
+
+char msg[2];
 
 uint8_t TxAddress[] = {0xEE,0xDD,0xCC,0xBB,0xAA};
 
@@ -84,7 +99,59 @@ uint8_t TxAddress[] = {0xEE,0xDD,0xCC,0xBB,0xAA};
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+void DisplayData(uint8_t *data)
+{
+	for(int i = 0; i<32; i++)
+	{
+	 sprintf(msg, "%d", data[i]);
+	 HAL_UART_Transmit(&hlpuart1, (uint8_t *)msg, strlen(msg), HAL_MAX_DELAY);
+	 HAL_UART_Transmit(&hlpuart1, &space, sizeof(space), 1000);
+	 HAL_UART_Transmit(&hlpuart1, &space, sizeof(space), 1000);
+	 HAL_UART_Transmit(&hlpuart1, &space, sizeof(space), 1000);
+	}
+	HAL_UART_Transmit(&hlpuart1, pauza, strlen((char *)pauza), 1000);
+	HAL_UART_Transmit(&hlpuart1, pauza, strlen((char *)pauza), 1000);
+}
+void SendDataWhenComplete(void)
+{
+	MsReady = 0;
+	HAL_FDCAN_Stop(&hfdcan1);
+	if (NRF24_Transmit(DataBuffer1) == 1)// Send data via radio.
+	{
+		DisplayData(DataBuffer1);
+	}
+	else
+	{
+		HAL_UART_Transmit(&hlpuart1, text2, strlen((char *)text2), 1000);
+	}
+	if (NRF24_Transmit(DataBuffer2) == 1)// Send data via radio.
+	{
+		DisplayData(DataBuffer2);
+	}
+	else
+	{
+		HAL_UART_Transmit(&hlpuart1, text2, strlen((char *)text2), 1000);
+	}
+	if (NRF24_Transmit(DataBuffer3) == 1)// Send data via radio.
+	{
+		DisplayData(DataBuffer3);
+	}
+	else
+	{
+		HAL_UART_Transmit(&hlpuart1, text2, strlen((char *)text2), 1000);
+	}
+	HAL_UART_Transmit(&hlpuart1, pauza, strlen((char *)pauza), 1000);
+	HAL_FDCAN_Start(&hfdcan1);
+}
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)//Przerwanie Awaryjne
+{
+	HAL_UART_Transmit(&hlpuart1, text, strlen((char *)text), 1000);
+	HAL_UART_Transmit(&hlpuart1, pauza, strlen((char *)pauza), 1000);
+	DataBuffer1[0] = 'a';
+	DataBuffer2[0] = 'b';
+	DataBuffer3[0] = 'c';
+	TIMIRQ = 0xff;
+}
 /* USER CODE END 0 */
 
 /**
@@ -126,6 +193,8 @@ int main(void)
 
   HAL_FDCAN_Start(&hfdcan1); //Start CAN Protocol
   HAL_FDCAN_ActivateNotification(&hfdcan1, FDCAN_IT_GROUP_RX_FIFO0, FDCAN_TX_BUFFER0); // Activate interrupt notifications
+
+  HAL_TIM_Base_Start_IT(&htim2);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -133,42 +202,48 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+
     /* USER CODE BEGIN 3 */
 	  if(MsReady == 0xff)
 	  {
-		  if (NRF24_Transmit(DataToSend) == 1)// Send data via radio.
-		  {
-			  MsReady = 0;
-			  HAL_UART_Transmit(&hlpuart1, &DataToSend, strlen((char *)DataToSend), 1000);
-			  HAL_UART_Transmit(&hlpuart1, &pauza, strlen((char *)pauza), 1000);
-		  }
-		  else
-		  {
-			  HAL_UART_Transmit(&hlpuart1, text2, strlen((char *)text2),1000);
-		  }
+		  HAL_TIM_Base_Stop(&htim2);//Added reseting code line in stm32g4xx_hal_tim.c
+		  SendDataWhenComplete();
+		  HAL_Delay(100);
+		  HAL_TIM_Base_Start(&htim2);
+	  }
+	  else if(TIMIRQ == 0xff)
+	  {
+		  HAL_TIM_Base_Stop(&htim2);//Added reseting code line in stm32g4xx_hal_tim.c
+		  SendDataWhenComplete();
+		  TIMIRQ = 0;
+		  HAL_Delay(100);
+		  HAL_TIM_Base_Start(&htim2);
 	  }
 	  else
 	  {
 		 CAN1_TX(0x0A, &TxData);
 		 HAL_Delay(1);
 		 CAN1_TX(0x0B, &TxData2);
+ 		 HAL_Delay(1);
+		 CAN1_TX(0x0C, &TxData3);
 		 HAL_Delay(1);
-		 CAN1_TX(0x0C, &TxData);
+		 CAN1_TX(0x0D, &TxData4);
+ 		 HAL_Delay(1);
+ 		 CAN1_TX(0x0E, &TxData5);
 		 HAL_Delay(1);
-		 CAN1_TX(0x0D, &TxData2);
+		 CAN1_TX(0x0F, &TxData6);
 		 HAL_Delay(1);
-		 CAN1_TX(0x0E, &TxData);
+		 CAN1_TX(0x60, &TxData7);
 		 HAL_Delay(1);
-		 CAN1_TX(0x0F, &TxData2);
+		 CAN1_TX(0x5F, &TxData8);
 		 HAL_Delay(1);
-		 CAN1_TX(0x60, &TxData);
+		 CAN1_TX(0x5B, &TxData9);
 		 HAL_Delay(1);
-		 CAN1_TX(0x5F, &TxData2);
-		 HAL_Delay(1);
-		 CAN1_TX(0x5B, &TxData);
-		 HAL_Delay(100);
+		 CAN1_TX(0x5A, &TxData9);
+		 HAL_Delay(1000);
 	  }
   }
+
   /* USER CODE END 3 */
 }
 
@@ -380,23 +455,30 @@ static void MX_TIM2_Init(void)
   /* USER CODE END TIM2_Init 0 */
 
   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_SlaveConfigTypeDef sSlaveConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
 
   /* USER CODE BEGIN TIM2_Init 1 */
 
   /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 0;
+  htim2.Init.Prescaler = 10000;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 4.294967295E9;
+  htim2.Init.Period = 85000;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
   {
     Error_Handler();
   }
   sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
   if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sSlaveConfig.SlaveMode = TIM_SLAVEMODE_DISABLE;
+  sSlaveConfig.InputTrigger = TIM_TS_ITR0;
+  if (HAL_TIM_SlaveConfigSynchro(&htim2, &sSlaveConfig) != HAL_OK)
   {
     Error_Handler();
   }

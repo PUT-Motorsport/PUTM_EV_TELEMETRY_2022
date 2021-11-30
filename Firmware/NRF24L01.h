@@ -6,7 +6,7 @@
 void NRF24_Init (void);
 
 void NRF24_TxMode (uint8_t *Address, uint8_t channel);
-uint8_t NRF24_Transmit (uint8_t *data);
+uint8_t NRF24_Transmit (uint8_t *data1);
 
 void NRF24_RxMode (uint8_t *Address, uint8_t channel);
 uint8_t isDataAvailable (int pipenum);

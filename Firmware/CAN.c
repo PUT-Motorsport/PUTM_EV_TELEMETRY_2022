@@ -8,18 +8,16 @@ extern FDCAN_TxHeaderTypeDef TxHeader_FDCAN1;
 
 extern uint8_t Rxdata[8];
 extern uint8_t TxData[8];
-extern uint8_t DataToSend[63];
+//extern uint8_t DataToSend[63];
+
+extern uint8_t DataBuffer1[32];
+extern uint8_t DataBuffer2[30];
+extern uint8_t DataBuffer3[6];
 
 extern uint8_t MsReady;
 
 uint16_t flag_buffer = 0;
-/**
-  * @brief RxFifo0 callback function. Called when new data arrives in RxFifo0
-  * @param hfdcan pointer to an FDCAN_HandleTypeDef structure that contains
-  *        the configuration information for the specified FDCAN.
-  * @param  RxFifo0ITs indicates which Rx FIFO 0 interrupts are signalled.
-  * @retval None
-  */
+
 __weak void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan1, uint32_t RxFifo0ITs)
 {
   /* Prevent unused argument(s) compilation warning */
@@ -35,107 +33,101 @@ __weak void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan1, uint32_t RxF
 	  //Error_Handler();
   }
 }
-/*
- * @brief This function is called after receiving CAN message. Function matches CAN frames with correspondig
- 	  spot in DataToSend buffer.
- * @param pointer to the data buffer where newly receivd message is being stored.    
- * @retval None
- */
+
 void BuildMessageAll(uint8_t Rxdata[])
-{
-	if(RxHeader_FDCAN1.Identifier == 0x0A)// APPS
+{///////////////////////////////////DATA BUFFER 1//////////////////////////////////////////
+	if(RxHeader_FDCAN1.Identifier == 0x0A)// APPS[2]
 		{
 			flag_buffer = flag_buffer | 0x01;
-			for(int i=0;i<2;i++)
+			for(int i=1;i<3;i++)
 			{
-				DataToSend[i] = Rxdata[i];
+				DataBuffer1[i] = Rxdata[i];
 			}
 		}
 	else if(RxHeader_FDCAN1.Identifier == 0x0B)//Prędkość obrotowa silnika[2] / Prąd RMS[2] / Status[2] / Temperatura1[1] / Temperatura2[1]
 		{
 			flag_buffer = flag_buffer | 0x02;
-			for(int i=2;i<10;i++)
+			for(int i=3;i<11;i++)
 			{
-				DataToSend[i] = Rxdata[i-2];
+				DataBuffer1[i] = Rxdata[i-3];
 			}
 		}
 	else if(RxHeader_FDCAN1.Identifier == 0x0C)//Kod błędu[1] / State od charge[1] / napięcie 6 celli LV[6]
 		{
 			flag_buffer = flag_buffer | 0x04;
-			for(int i=10;i<18;i++)
+			for(int i=11;i<19;i++)
 			{
-				DataToSend[i] = Rxdata[i-10];
+				DataBuffer1[i] = Rxdata[i-11];
 			}
 		}
 	else if(RxHeader_FDCAN1.Identifier == 0x0D)//Ready to Drive[1] / Prędkość koła lewego[2] / prędkość koła prawego[2] / ciśnienie hamulców1[2] / tem. mono[1]
 		{
 			flag_buffer = flag_buffer | 0x08;
-			for(int i=18;i<26;i++)
+			for(int i=19;i<27;i++)
 			{
-				DataToSend[i] = Rxdata[i-18];
+				DataBuffer1[i] = Rxdata[i-19];
 			}
 		}
+	///////////////////////////////////DATA BUFFER 2//////////////////////////////////////////
 	else if(RxHeader_FDCAN1.Identifier == 0x0E)//HV prąd[2] / HV napięcie[2] / Temp max[1] / Poziom naładowania[1] / Status[1] / Kody błędów[1]
 		{
 			flag_buffer = flag_buffer | 0x10;
-			for(int i=26;i<34;i++)
+			for(int i=1;i<9;i++)
 			{
-				DataToSend[i] = Rxdata[i-26];
-			}
-		}
-	else if(RxHeader_FDCAN1.Identifier == 0x0F)//Kąt ugięcia dampera prawego przód[1] / lewego[1] / ciśnienie hamulców2[2]
-		{
-			flag_buffer = flag_buffer | 0x20;
-			for(int i=34;i<42;i++)
-			{
-				DataToSend[i] = Rxdata[i-34];
+				DataBuffer2[i] = Rxdata[i];
 			}
 		}
 	else if(RxHeader_FDCAN1.Identifier == 0x60)//Prędkość obrotwa koła prawego[2] / lewego[2] / Kąt ugięcia dampera prawego tył[1] / lewego[1] / temp. wody za pompą[1] / za chłodnicą[1]
 		{
-			flag_buffer = flag_buffer | 0x40;
-			for(int i=42;i<50;i++)
+			flag_buffer = flag_buffer | 0x20;
+			for(int i=8;i<17;i++)
 			{
-				DataToSend[i] = Rxdata[i-42];
+				DataBuffer2[i] = Rxdata[i-8];
 			}
 		}
 	else if(RxHeader_FDCAN1.Identifier == 0x5F)// avg.temp[1] / tem 6 celli LV[6]
 		{
-			flag_buffer = flag_buffer | 0x80;
-			for(int i=50;i<57;i++)
+			flag_buffer = flag_buffer | 0x40;
+			for(int i=16;i<24;i++)
 			{
-				DataToSend[i] = Rxdata[i-50];
+				DataBuffer2[i] = Rxdata[i-16];
 			}
 		}
 	else if(RxHeader_FDCAN1.Identifier == 0x5B)//GyroX[2] / GyroY[2] / GyroZ[2]
 		{
-			flag_buffer = flag_buffer | 0x100;
-			for(int i=57;i<63;i++)
+			flag_buffer = flag_buffer | 0x80;
+			for(int i=23;i<30;i++)
 			{
-				DataToSend[i] = Rxdata[i-57];
+				DataBuffer2[i] = Rxdata[i-22];
 			}
 		}
+///////////////////////////////////DATA BUFFER 3//////////////////////////////////////////
 	else if(RxHeader_FDCAN1.Identifier == 0x5A)// AccX[2] / AccY[2] / AccZ[2]
 		{
-			flag_buffer = flag_buffer | 0x200;
-			for(int i=63;i<69;i++)
+			flag_buffer = flag_buffer | 0x100;
+			for(int i=1;i<7;i++)
 			{
-				DataToSend[i] = Rxdata[i-63];
+				DataBuffer3[i] = Rxdata[i];
 			}
 		}
-		if(flag_buffer >= 255)//if all messages are in place, send info that we want to send message.
+	else if(RxHeader_FDCAN1.Identifier == 0x0F)//Kąt ugięcia dampera prawego przód[2] / lewego[2] / ciśnienie hamulców2[2]
 		{
-			//here we are gonna need to suspend RxFifo0 Callbacks to ensure transmission.
+			flag_buffer = flag_buffer | 0x200;
+			for(int i=7;i<13;i++)
+			{
+				DataBuffer3[i] = Rxdata[i-7];
+			}
+		}
+		//SEND
+		if(flag_buffer == 1023)
+		{
 			MsReady = 0xff;
 			flag_buffer = 0;
+			DataBuffer1[0] = 'a';
+			DataBuffer2[0] = 'b';
+			DataBuffer3[0] = 'c';
 		}
 }
-/*
- * @brief This is a test function used to create some random frame for testing.
- * @param CAN frame ID
- * @param  pointer to the data buffer
- * @retval None
- */
 void CAN1_TX(uint16_t ID, uint8_t *data)//Test Function
 {
 	TxHeader_FDCAN1.DataLength = FDCAN_DLC_BYTES_8;
@@ -157,4 +149,5 @@ void CAN1_TX(uint16_t ID, uint8_t *data)//Test Function
 
 	}
 }
+
 

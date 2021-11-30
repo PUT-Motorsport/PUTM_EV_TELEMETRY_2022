@@ -8,16 +8,22 @@ extern FDCAN_TxHeaderTypeDef TxHeader_FDCAN1;
 
 extern uint8_t Rxdata[8];
 extern uint8_t TxData[8];
-//extern uint8_t DataToSend[63];
 
 extern uint8_t DataBuffer1[32];
-extern uint8_t DataBuffer2[30];
-extern uint8_t DataBuffer3[6];
+extern uint8_t DataBuffer2[32];
+extern uint8_t DataBuffer3[32];
 
 extern uint8_t MsReady;
 
 uint16_t flag_buffer = 0;
-
+/**
+  * @brief  Callback function called when new data frames arrives from CAN bus.
+  *
+  * @param  Pointer to FDCAN handler.
+  *         
+  * @param  Wich RxFifo should Trigger a callback.
+  * @retval None
+  */
 __weak void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan1, uint32_t RxFifo0ITs)
 {
   /* Prevent unused argument(s) compilation warning */
@@ -33,9 +39,16 @@ __weak void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan1, uint32_t RxF
 	  //Error_Handler();
   }
 }
-
+/**
+  * @brief  This function puts a newly arrived data to corresponding place in a data packet.
+  *	    It is triggered by CAN Callback.
+  * @param  Data aquired from CAN bus.
+  *         
+  * @retval None
+  */
 void BuildMessageAll(uint8_t Rxdata[])
-{///////////////////////////////////DATA BUFFER 1//////////////////////////////////////////
+{
+///////////////////////////////////DATA BUFFER 1//////////////////////////////////////////
 	if(RxHeader_FDCAN1.Identifier == 0x0A)// APPS[2]
 		{
 			flag_buffer = flag_buffer | 0x01;
@@ -68,7 +81,7 @@ void BuildMessageAll(uint8_t Rxdata[])
 				DataBuffer1[i] = Rxdata[i-19];
 			}
 		}
-	///////////////////////////////////DATA BUFFER 2//////////////////////////////////////////
+///////////////////////////////////DATA BUFFER 2//////////////////////////////////////////
 	else if(RxHeader_FDCAN1.Identifier == 0x0E)//HV prąd[2] / HV napięcie[2] / Temp max[1] / Poziom naładowania[1] / Status[1] / Kody błędów[1]
 		{
 			flag_buffer = flag_buffer | 0x10;
@@ -128,6 +141,15 @@ void BuildMessageAll(uint8_t Rxdata[])
 			DataBuffer3[0] = 'c';
 		}
 }
+/**
+  * @brief  Function to send data to a CAN bus
+  *
+  * @param  Frame ID
+  *
+  * @param Pointer to a data buffer.
+  *
+  * @retval None
+  */
 void CAN1_TX(uint16_t ID, uint8_t *data)//Test Function
 {
 	TxHeader_FDCAN1.DataLength = FDCAN_DLC_BYTES_8;

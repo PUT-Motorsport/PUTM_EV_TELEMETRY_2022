@@ -5,5 +5,5 @@ Written in C/C++ for STM32L4P5RET6 microprocessor, created in STM32CubeIDE 1.8.0
 ## State Diagram
 ![Telemetry_States](https://user-images.githubusercontent.com/94369639/156006276-37a9b08f-9a6b-41ac-ae7d-0c3ae8a073ea.png)
 ## Block Diagram
-![PUTM_TELEMETRY_ALGORITHM drawio](https://user-images.githubusercontent.com/94369639/156019829-7b48b562-a15c-4e8f-8a7e-c36359a0512d.png)
+![PUTM_TELEMETRY_ALGORITHM drawio](https://user-images.githubusercontent.com/94369639/156020223-d6fed00b-d8b6-403b-af1b-83b63bbf9215.png)
 

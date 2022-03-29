@@ -8,7 +8,16 @@
 #include <Can_Send_Receive.hpp>
 #include "CAN.h"
 #include "CAN.c"
+
 extern CAN_HandleTypeDef hcan1;
+
+uint32_t mailbox1 = 0;
+
+static CAN_TxHeaderTypeDef Tx1{
+	Tx1.IDE = CAN_ID_STD,
+	Tx1.RTR = CAN_RTR_DATA,
+};
+
 /**
 * @brief Receive Message
 * This function receives CAN message.
@@ -44,11 +53,8 @@ bool Can_Message::Build_Message()
 */
 void Send_Message(uint32_t ID, uint32_t DLC, uint8_t *data)
 {
-	CAN_TxHeaderTypeDef TxHeader_HCAN1;
-
-	TxHeader_HCAN1.DLC = DLC;
-	TxHeader_HCAN1.StdId = ID;
-	TxHeader_HCAN1.IDE = CAN_ID_STD;
+	Tx1.DLC = DLC;
+	Tx1.StdId = ID;
 	uint32_t mailbox1 = 0;
-	HAL_CAN_AddTxMessage(&hcan1, &TxHeader_HCAN1, data, &mailbox1);
+	HAL_CAN_AddTxMessage(&hcan1, &Tx1, data, &mailbox1);
 }

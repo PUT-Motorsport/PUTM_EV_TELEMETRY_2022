@@ -12,6 +12,7 @@
 
 void Send_Message(uint32_t ID, uint32_t DLC, uint8_t *data);
 
+
 class Can_Message
 {
 private:

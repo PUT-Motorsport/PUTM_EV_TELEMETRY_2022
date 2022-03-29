@@ -146,6 +146,13 @@ uint8_t * Packet_1::Prepare_Data(uint16_t flag_buffer)
 
 	DataBuffer1[30] = flag_buffer>>8;
 	DataBuffer1[31] = flag_buffer;
+
+	for(int i=1;i<33;i++)
+		{
+			DataBuffer1[i] = rand() % 255;
+		}
+
+
 	//Add flag_buffer to DataBuffer;
 	return DataBuffer1;
 }
@@ -162,8 +169,12 @@ void Packet_1::Clear_Packet()
 
 uint8_t * States::Build_State_Message()
 {
-	Data_Buffer1[0] = 'a';
-	Data_Buffer1[1] = 1;//APPS State etc...
+	Data_Buffer1[0] = 's';
+	for(int i=1;i<33;i++)
+	{
+		Data_Buffer1[i] = (i+1)%4;
+	}
+	//Data_Buffer1[1] = 1;//APPS State etc...
 	/*
 	 *
 	 *

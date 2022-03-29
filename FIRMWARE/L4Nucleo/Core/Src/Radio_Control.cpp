@@ -32,10 +32,13 @@ bool Send_Data(uint8_t* pData)
 {
 	if(NRF24_Transmit(pData) == 1)
 	{
+		HAL_GPIO_WritePin(led_dzia_a_GPIO_Port, led_dzia_a_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(led_nie_dziala_GPIO_Port, led_nie_dziala_Pin, GPIO_PIN_RESET);
 		return true;
 	}
 	else
 	{
+		HAL_GPIO_WritePin(led_nie_dziala_GPIO_Port, led_nie_dziala_Pin, GPIO_PIN_SET);
 		Clear_retrasmission_flag();
 		return false;
 	}

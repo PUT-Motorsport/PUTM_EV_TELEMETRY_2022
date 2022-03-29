@@ -19,10 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include <Can_Send_Receive.hpp>
-#include <Build_Packet.hpp>
-#include <Radio_Control.hpp>
-#include "stdio.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -44,14 +41,12 @@
 
 /* Private variables ---------------------------------------------------------*/
 CAN_HandleTypeDef hcan1;
+
 SPI_HandleTypeDef hspi1;
 
 TIM_HandleTypeDef htim2;
 
 /* USER CODE BEGIN PV */
-uint8_t Can_Interrupt_flag = 0;
-uint8_t TIM_IRQ_Mode_flag = 0;
-uint8_t TestData[8] = {1,2,3,4,5,6,7,8};
 
 /* USER CODE END PV */
 
@@ -62,21 +57,7 @@ static void MX_CAN1_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
-void Send(Packet_1 *pck1, States *st1)
-{
-	HAL_TIM_Base_Stop(&htim2);
-	if(Send_Data(pck1->Prepare_Data(pck1->Return_flag_buffer())) == false)
-	{
-		//Flash yellow LED. Maybe send telemetry status.
-	}
-	else
-	{
-		//Send States
-		Send_Data(st1->Build_State_Message());
-	}
-	pck1->Clear_Packet();
-	HAL_TIM_Base_Start(&htim2);
-}
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -116,59 +97,19 @@ int main(void)
   MX_SPI1_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-  Can_Message *msg1 = new Can_Message();
-  Packet_1 *pck1 = new Packet_1();
-  States * st1 = new States();
-
-  Create_parsing_array();
-
-  Open_Filter();
-
-  CAN_Init();
-
-  if(Setup_Radio_As_Transmiter() == false)
-  {
- 	 Error_Handler();
-  }
-
-  //HAL_TIM_Base_Start_IT(&htim2);
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
-   {
-     /* USER CODE END WHILE */
+  {
+    /* USER CODE END WHILE */
 
-     /* USER CODE BEGIN 3 */
- 	  /*
- 	   * Regular state of the code, used to receive, pack and send data
- 	   */
-	  Send_Message(0x0A, 8, TestData);
-	  HAL_Delay(1);
- 	  if((Can_Interrupt_flag  == 1) & (TIM_IRQ_Mode_flag == 0))
- 	  {
- 		  msg1->Build_Message();
- 		  pck1->Choose_Parser(msg1, pck1, st1);
- 		  if(pck1->Return_flag_buffer() == PACKET_FULL)
- 		  {
- 			  //Send
- 			  Send(pck1, st1);
- 		  }
- 	  }
- 	  /*
- 	   * TIM_IRQ_Mode. Used when not enough data arrives in sufficient time.
- 	   */
- 	  else if(TIM_IRQ_Mode_flag == 1)
- 	  {
- 		  Send(pck1, st1);
- 		  TIM_IRQ_Mode_flag = 0;
- 	  }
- 	  Can_Interrupt_flag = 0;
-   /* USER CODE END 3 */
-   }
+    /* USER CODE BEGIN 3 */
   }
+  /* USER CODE END 3 */
+}
 
 /**
   * @brief System Clock Configuration
@@ -254,6 +195,7 @@ static void MX_CAN1_Init(void)
   /* USER CODE END CAN1_Init 2 */
 
 }
+
 /**
   * @brief SPI1 Initialization Function
   * @param None

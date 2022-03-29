@@ -42,7 +42,8 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-
+extern uint8_t Can_Interrupt_flag;
+extern uint8_t TIM_IRQ_Mode_flag;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -58,9 +59,6 @@
 /* External variables --------------------------------------------------------*/
 extern CAN_HandleTypeDef hcan1;
 extern TIM_HandleTypeDef htim2;
-
-extern uint8_t Can_Interrupt_flag;
-extern uint8_t TIM_IRQ_Mode_flag;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */

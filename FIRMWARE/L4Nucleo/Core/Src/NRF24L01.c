@@ -176,7 +176,7 @@ void NRF24_Init (void)
 	nrf24_WriteReg (SETUP_AW, 0x03);  // 5 Bytes for the TX/RX address
 	nrf24_WriteReg (SETUP_RETR, 0);   // No retransmission
 	nrf24_WriteReg (RF_CH, 0);  // will be setup during Tx or RX
-	nrf24_WriteReg (RF_SETUP, 0x0E);   // Power= 0db, data rate = 2Mbps
+	nrf24_WriteReg (RF_SETUP, 0x0F);   // Power= 0db, data rate = 2Mbps
 	//NEW
 	//AutoACK works
 	nrf24_WriteReg(EN_AA, 		0b00000111);  // AutoACK

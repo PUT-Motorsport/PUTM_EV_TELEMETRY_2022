@@ -1,0 +1,21 @@
+NRF24L01.c:17:6:void CS_Select()	8	static
+NRF24L01.c:22:6:void CS_UnSelect()	8	static
+NRF24L01.c:28:6:void CE_Enable()	8	static
+NRF24L01.c:33:6:void CE_Disable()	8	static
+NRF24L01.c:41:6:void nrf24_WriteReg(uint8_t, uint8_t)	24	static
+NRF24L01.c:57:6:void nrf24_WriteRegMulti(uint8_t, uint8_t*, int)	32	static
+NRF24L01.c:74:9:uint8_t nrf24_ReadReg(uint8_t)	24	static
+NRF24L01.c:92:6:void nrf24_ReadReg_Multi(uint8_t, uint8_t*, int)	24	static
+NRF24L01.c:106:6:void nrfsendCmd(uint8_t)	16	static
+NRF24L01.c:117:6:void nrf24_reset(uint8_t)	40	static
+NRF24L01.c:166:6:void NRF24_Init()	16	static
+NRF24L01.c:201:6:void NRF24_TxMode(uint8_t*, uint8_t)	24	static
+NRF24L01.c:225:6:void Clear_retrasmission_flag()	8	static
+NRF24L01.c:234:9:uint8_t NRF24_Transmit(uint8_t*)	24	static
+NRF24L01.c:272:6:void NRF24_RxMode(uint8_t*, uint8_t)	24	static
+NRF24L01.c:312:9:uint8_t isDataAvailable(int)	24	static
+NRF24L01.c:328:6:void NRF24_Receive(uint8_t*)	24	static
+NRF24L01.c:354:6:void NRF24_ReadAll(uint8_t*)	32	static
+Radio_Control.cpp:19:6:bool Setup_Radio_As_Transmiter()	8	static
+Radio_Control.cpp:31:6:bool Send_Data(uint8_t*)	16	static
+Radio_Control.cpp:49:6:bool Turn_Radio_Off()	4	static

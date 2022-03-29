@@ -1,0 +1,5 @@
+CAN.c:22:6:void CAN_Init()	8	static
+CAN.c:35:6:void Close_Filter()	8	static
+CAN.c:68:6:void Open_Filter()	8	static
+Can_Send_Receive.cpp:18:6:bool Can_Message::Build_Message()	56	static
+Can_Send_Receive.cpp:45:6:void Send_Message(uint32_t, uint32_t, uint8_t*)	56	static

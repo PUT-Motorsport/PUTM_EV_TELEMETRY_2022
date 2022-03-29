@@ -1,3 +1,0 @@
-CAN.c:22:6:CAN_Init	8	static
-CAN.c:33:6:Close_Filter	8	static
-CAN.c:66:6:Open_Filter	8	static

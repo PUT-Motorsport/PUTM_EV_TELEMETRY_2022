@@ -1,0 +1,30 @@
+14:57:26 **** Incremental Build of configuration Debug for project L4Nucleo ****
+make -j8 all 
+arm-none-eabi-gcc "../Core/Src/NRF24L01.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L476xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/NRF24L01.d" -MT"Core/Src/NRF24L01.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/NRF24L01.o"
+arm-none-eabi-g++ "../Core/Src/Radio_Control.cpp" -mcpu=cortex-m4 -std=gnu++14 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L476xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -fno-exceptions -fno-rtti -fno-use-cxa-atexit -Wall -fstack-usage -MMD -MP -MF"Core/Src/Radio_Control.d" -MT"Core/Src/Radio_Control.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/Radio_Control.o"
+../Core/Src/NRF24L01.c: In function 'NRF24_Transmit':
+../Core/Src/NRF24L01.c:237:10: warning: variable 'tell_me' set but not used [-Wunused-but-set-variable]
+  237 |  uint8_t tell_me = 0;
+      |          ^~~~~~~
+In file included from ../Core/Src/Radio_Control.cpp:8:
+../Core/Src/NRF24L01.c: In function 'uint8_t NRF24_Transmit(uint8_t*)':
+../Core/Src/NRF24L01.c:237:10: warning: variable 'tell_me' set but not used [-Wunused-but-set-variable]
+  237 |  uint8_t tell_me = 0;
+      |          ^~~~~~~
+arm-none-eabi-g++ -o "L4Nucleo.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\wasyl\Desktop\PUTM_EV_TELEMETRY_2022\FIRMWARE\L4Nucleo\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="L4Nucleo.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
+Finished building target: L4Nucleo.elf
+ 
+arm-none-eabi-size   L4Nucleo.elf 
+arm-none-eabi-objdump -h -S  L4Nucleo.elf  > "L4Nucleo.list"
+arm-none-eabi-objcopy  -O binary  L4Nucleo.elf  "L4Nucleo.bin"
+   text	   data	    bss	    dec	    hex	filename
+  23428	    140	   1960	  25528	   63b8	L4Nucleo.elf
+Finished building: default.size.stdout
+ 
+Finished building: L4Nucleo.bin
+ 
+Finished building: L4Nucleo.list
+ 
+
+14:57:28 Build Finished. 0 errors, 2 warnings. (took 1s.855ms)
+

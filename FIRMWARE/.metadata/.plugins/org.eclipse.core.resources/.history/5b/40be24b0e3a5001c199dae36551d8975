@@ -1,0 +1,23 @@
+/*
+ * CAN_test.hpp
+ *
+ *  Created on: 17 mar 2022
+ *      Author: wasyl
+ */
+
+#ifndef INC_CAN_TEST_HPP_
+#define INC_CAN_TEST_HPP_
+
+const static CAN_TxHeaderTypeDef Tx1()
+{
+	CAN_TxHeaderTypeDef Tx1;
+	Tx1.StdId = 0x0A;
+	Tx1.ExtId = 0;
+	Tx1.IDE = CAN_ID_STD;
+	Tx1.RTR = CAN_RTR_DATA;
+	Tx1.DLC = 8;
+	return Tx1;
+}
+
+
+#endif /* INC_CAN_TEST_HPP_ */

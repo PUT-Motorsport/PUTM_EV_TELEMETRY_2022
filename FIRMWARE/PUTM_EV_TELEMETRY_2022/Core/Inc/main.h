@@ -58,6 +58,14 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define NRF24_CSN_Pin GPIO_PIN_4
+#define NRF24_CSN_GPIO_Port GPIOA
+#define LED_RED_Pin GPIO_PIN_4
+#define LED_RED_GPIO_Port GPIOC
+#define LED_GREEN_Pin GPIO_PIN_5
+#define LED_GREEN_GPIO_Port GPIOC
+#define NRF24_CE_Pin GPIO_PIN_0
+#define NRF24_CE_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 #define PACKET_FULL 1023
 /* USER CODE END Private defines */
@@ -67,5 +75,3 @@ void Error_Handler(void);
 #endif
 
 #endif /* __MAIN_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

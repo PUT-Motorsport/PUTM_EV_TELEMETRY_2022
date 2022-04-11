@@ -9,10 +9,6 @@
 #include "main.h"
 
 extern CAN_HandleTypeDef hcan1;
-
-CAN_FilterTypeDef   ToggleFilterConfig;
-CAN_FilterTypeDef   DataFilterConfig;
-
 /**
 * @brief Can Initialization
 * This function starts CAN protocol and activates interrupt from RX FIFO
@@ -34,30 +30,7 @@ void CAN_Init()
 */
 void Close_Filter()
 {
-	ToggleFilterConfig.FilterIdHigh =
-	ToggleFilterConfig.FilterIdLow =
-	ToggleFilterConfig.FilterMaskIdHigh =
-	ToggleFilterConfig.FilterMaskIdLow =
-	ToggleFilterConfig.FilterBank =
-	ToggleFilterConfig.FilterFIFOAssignment =
-	ToggleFilterConfig.FilterMode =
-	ToggleFilterConfig.FilterScale =
-	ToggleFilterConfig.FilterActivation =
-	ToggleFilterConfig.SlaveStartFilterBank =
 
-	HAL_CAN_ConfigFilter(&hcan1, &ToggleFilterConfig);
-
-	DataFilterConfig.FilterIdHigh =
-	DataFilterConfig.FilterIdLow =
-	DataFilterConfig.FilterMaskIdHigh =
-	DataFilterConfig.FilterMaskIdLow =
-	DataFilterConfig.FilterBank =
-	DataFilterConfig.FilterFIFOAssignment =
-	DataFilterConfig.FilterMode =
-	DataFilterConfig.FilterScale =
-	DataFilterConfig.FilterActivation =
-	ToggleFilterConfig.SlaveStartFilterBank =
-	HAL_CAN_ConfigFilter(&hcan1, &DataFilterConfig);
 }
 /**
 * @brief Open filter
@@ -65,30 +38,8 @@ void Close_Filter()
 * @param: none
 * @retval none
 */
+
 void Open_Filter()
 {
-	ToggleFilterConfig.FilterIdHigh =
-	ToggleFilterConfig.FilterIdLow =
-	ToggleFilterConfig.FilterMaskIdHigh =
-	ToggleFilterConfig.FilterMaskIdLow =
-	ToggleFilterConfig.FilterBank =
-	ToggleFilterConfig.FilterFIFOAssignment =
-	ToggleFilterConfig.FilterMode =
-	ToggleFilterConfig.FilterScale =
-	ToggleFilterConfig.FilterActivation =
-	ToggleFilterConfig.SlaveStartFilterBank =
 
-	HAL_CAN_ConfigFilter(&hcan1, &ToggleFilterConfig);
-
-	DataFilterConfig.FilterIdHigh =
-	DataFilterConfig.FilterIdLow =
-	DataFilterConfig.FilterMaskIdHigh =
-	DataFilterConfig.FilterMaskIdLow =
-	DataFilterConfig.FilterBank =
-	DataFilterConfig.FilterFIFOAssignment =
-	DataFilterConfig.FilterMode =
-	DataFilterConfig.FilterScale =
-	DataFilterConfig.FilterActivation =
-	ToggleFilterConfig.SlaveStartFilterBank =
-	HAL_CAN_ConfigFilter(&hcan1, &DataFilterConfig);
 }

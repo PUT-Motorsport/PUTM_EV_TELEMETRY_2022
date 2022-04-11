@@ -7,11 +7,11 @@ extern uint8_t TxAddress[5];
 
 #define NRF24_SPI &hspi1
 
-#define NRF24_CE_PORT   GPIOC
-#define NRF24_CE_PIN    GPIO_PIN_7
+#define NRF24_CE_PORT   GPIOB
+#define NRF24_CE_PIN    GPIO_PIN_0
 
-#define NRF24_CSN_PORT   GPIOB
-#define NRF24_CSN_PIN    GPIO_PIN_6
+#define NRF24_CSN_PORT   GPIOA
+#define NRF24_CSN_PIN    GPIO_PIN_4
 
 
 void CS_Select (void)
@@ -198,7 +198,7 @@ void NRF24_Init (void)
 
 // set up the Tx mode
 
-void NRF24_TxMode (uint8_t *Address, uint8_t channel)
+uint8_t NRF24_TxMode (uint8_t *Address, uint8_t channel)
 {
 	// disable the chip before configuring the device
 	CE_Disable();
@@ -216,7 +216,14 @@ void NRF24_TxMode (uint8_t *Address, uint8_t channel)
 	config = config | (1<<1);   // write 1 in the PWR_UP bit
 	config = config & (0xF2);    // write 0 in the PRIM_RX, and 1 in the PWR_UP, and all other bits are masked
 	nrf24_WriteReg (CONFIG, config);
-	//nrf24_ReadReg (CONFIG);
+	if(nrf24_ReadReg(CONFIG) != 2)
+	{
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
 
 	// Enable the chip after configuring the device
 	CE_Enable();

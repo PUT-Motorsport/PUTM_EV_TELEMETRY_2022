@@ -48,7 +48,11 @@ void Send_Message(uint32_t ID, uint32_t DLC, uint8_t *data)
 
 	TxHeader_HCAN1.DLC = DLC;
 	TxHeader_HCAN1.StdId = ID;
+	TxHeader_HCAN1.ExtId = 0;
+	TxHeader_HCAN1.RTR = 0;
+	TxHeader_HCAN1.TransmitGlobalTime = DISABLE;
 	TxHeader_HCAN1.IDE = CAN_ID_STD;
 	uint32_t mailbox1 = 0;
+
 	HAL_CAN_AddTxMessage(&hcan1, &TxHeader_HCAN1, data, &mailbox1);
 }

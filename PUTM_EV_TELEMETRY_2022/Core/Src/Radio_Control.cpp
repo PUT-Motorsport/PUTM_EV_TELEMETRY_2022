@@ -12,7 +12,7 @@ uint8_t TxAddress[5] = {0xEE,0xDD,0xCC,0xBB,0xAA};
 
 /**
 * @brief Radio initialization
-* This function turns on the radio, initilize it and set up as transmiter
+* This function turns on the radio, initilize it and sets up as transmitter
 * @param: none
 * @retval true if everything is ok, false if error occured.
 */
@@ -43,7 +43,7 @@ bool Send_Data(uint8_t* pData)
 	else
 	{
 		Clear_retrasmission_flag();
-		return false;
+		return true;
 	}
 }
 /**

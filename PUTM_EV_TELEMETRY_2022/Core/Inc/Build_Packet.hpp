@@ -20,12 +20,38 @@ void Create_parsing_array();
 class Packet_1{
 
 private:
-	uint16_t APPS;
-	uint16_t Motor_RPM;
-	uint16_t RMS_Current;
-	uint16_t Status;
-	uint8_t Temperature_1;
-	uint8_t Temperature_2;
+	//APPS
+	uint16_t Pedal_Position;
+	//BMS LV
+	uint16_t LV_Voltage_Sum;
+	uint8_t  LV_Soc;
+	uint8_t  LV_Temps;
+	uint8_t  LV_Current;
+	//TC
+	uint16_t Wehicle_Speed;
+	uint8_t  Water_Temp;
+	uint8_t  Water_pressure;
+	uint8_t  Motor_Current;
+	uint8_t  TS_Bools;
+	uint8_t  TC_Intensity;
+	uint16_t Adc_Susp_Right_r;
+	uint16_t Adc_Susp_Left_r;
+	uint16_t Acc_Lateral;
+	uint16_t Acc_Longitunal;
+	//SF
+	uint16_t SF_State;
+	//AQ Card
+	uint16_t Adc_Susp_Right_f;
+	uint16_t Adc_Susp_Left_f;
+	uint8_t  Break_Pressure_f;
+	uint8_t  Break_Pressure_r;
+	uint16_t Air_Flow_Vel;
+	//BMS_HV
+	uint16_t HV_Voltage_Sum;
+	uint8_t  HV_Soc;
+	uint8_t  HV_Temp_Max;
+	uint8_t  HV_Temps;
+	uint8_t  HV_Current;
 
 	uint8_t DataBuffer1[32] = { 0 };
 	uint8_t DataBuffer2[32] = { 0 };
@@ -35,27 +61,25 @@ private:
 public:
 	Packet_1()
 	{
-		APPS = 0;
-		Motor_RPM = 0;
-		RMS_Current = 0;
-		Status = 0;
-		Temperature_1 = 0;
-		Temperature_2 = 0;
-		DataBuffer1[32] = { 0 };
-		DataBuffer2[32] = { 0 };
-		DataBuffer3[32] = { 0 };
 		flag_buffer = 0;
 	}
-	~Packet_1();
 ///////////////////Methods///////////////////////
 	uint8_t Assign_Data(Can_Message *msg1);
-	uint8_t* Prepare_Data(uint16_t flag_buffer);
-	bool Choose_Parser(Can_Message *msg1, Packet_1 *pck1, States *st1);
-	void Clear_Packet();
+
+	uint8_t* Prepare_Data1(uint16_t flag_buffer);
+	uint8_t* Prepare_Data2(uint16_t flag_buffer);
+	uint8_t* Prepare_Data3(uint16_t flag_buffer);
+
+	bool Choose_Parser(Can_Message msg1, Packet_1 pck1, States st1);
 
 	friend void APPS_Parser(Packet_1 *pck1, Can_Message *msg1, States *st1);
 	friend void BMS_LV_Parser(Packet_1 *pck1, Can_Message *msg1, States *st1);
 
+
+
+
+
+	void Clear_Packet();
 	uint16_t Return_flag_buffer()
 	{
 		return flag_buffer;
@@ -78,11 +102,12 @@ private:
 	 *
 	 */
 public:
-	uint8_t Data_Buffer1[32] = { 0 };
+	uint8_t dev_states[32] = { 0 };
 	States()
 	{
 
 	}
+
 	uint8_t * Build_State_Message();
 
 	friend void APPS_Parser(Packet_1 *pck1, Can_Message *msg1, States *st1);

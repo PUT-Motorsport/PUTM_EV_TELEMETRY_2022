@@ -7,7 +7,10 @@
 
 #include <Build_Packet.hpp>
 #include <Frame_IDs.hpp>
+#include <tgmath.h>
 //#include <Device_State.hpp>
+
+const int num_of_frames = 10;
 
 //Declarations of all available data parsers
 
@@ -24,7 +27,9 @@ pointer_to_parser* parsing_array[10];//array stores pointers to specific parsing
 */
 uint8_t Packet_1::Assign_Data(Can_Message *msg1)
 {
-	if(msg1->return_ID() == 0x0A)// APPS[2]
+	/*
+	uint16_t ID = msg->return_ID();
+	if(ID == 0x0A)// APPS[2]
 		{
 			flag_buffer   = flag_buffer | 0x01;
 			APPS          = msg1->return_Data(0) << 8 | msg1->return_Data(1);
@@ -78,6 +83,8 @@ uint8_t Packet_1::Assign_Data(Can_Message *msg1)
 
 		}
 	return flag_buffer;
+	*/
+	return 0;
 }
 /**
 * @brief Creat a parsing array
@@ -103,6 +110,7 @@ void Create_parsing_array()
 	 	 	 	 	 	 	 	  */
 	 parsing_array[0] = APPS;
 	 parsing_array[1] = BMS_LV;
+
 	 	 	 	 	 	 	 	 /*
 	 	 	 	 	 	 	 	  *
 	 	 	 	 	 	 	 	  *
@@ -116,11 +124,28 @@ void Create_parsing_array()
 * @param: Pointer to can message.
 * @retval true if matched, false if not.
 */
-bool Packet_1::Choose_Parser(Can_Message *msg1, Packet_1 *pck1, States *st1)
+bool Packet_1::Choose_Parser(Can_Message msg1, Packet_1 pck1, States st1)
 {
-	if(msg1->return_ID() == APPS_ID)
+	uint16_t ID = msg1.return_ID();
+	int l = 0;
+	int p = num_of_frames-1;
+	int i = 0;
+	while(l <= p)
 	{
-		parsing_array[0]->ptr(pck1, msg1, st1);
+		i = floor((l+p)/2);
+		if(parsing_array[i]->ID < ID)
+		{
+			l = i+1;
+		}
+		else if(parsing_array[i]->ID > ID)
+		{
+			p = i-1;
+		}
+		else
+		{
+			parsing_array[i]->ptr(&pck1, &msg1, &st1);
+			break;
+		}
 	}
 return true;
 }
@@ -130,25 +155,40 @@ return true;
 * @param: flag_buffer variable, wich is used to indicate missing frames in packet.
 * @retval Pointer to DataBuffer1.
 */
-uint8_t * Packet_1::Prepare_Data(uint16_t flag_buffer)
+uint8_t * Packet_1::Prepare_Data1(uint16_t flag_buffer)
 {
 	//Buffer Indetificator.
-	DataBuffer1[0] = 'a';
-	//APPS
-	DataBuffer1[1] = APPS>>8;
-	DataBuffer1[2] = APPS;
-	//Motor RPM
-	DataBuffer1[3] = Motor_RPM>>8;
-	DataBuffer1[4] = Motor_RPM;
-	//RMS Current
-	DataBuffer1[5] = RMS_Current>>8;
-	DataBuffer1[6] = RMS_Current;
-
-	DataBuffer1[30] = flag_buffer>>8;
-	DataBuffer1[31] = flag_buffer;
+	for(int i=0;i<32;i++)
+		{
+			DataBuffer1[i] = rand()%100+1;
+		}
+		DataBuffer1[0] = 'a';
 	//Add flag_buffer to DataBuffer;
 	return DataBuffer1;
 }
+uint8_t * Packet_1::Prepare_Data2(uint16_t flag_buffer)
+{
+	//Buffer Indetificator.
+	for(int i=0;i<32;i++)
+		{
+			DataBuffer2[i] = rand()%100+1;
+		}
+		DataBuffer2[0] = 'b';
+		//Add flag_buffer to DataBuffer;
+		return DataBuffer2;
+}
+uint8_t * Packet_1::Prepare_Data3(uint16_t flag_buffer)
+{
+	//Buffer Indetificator.
+	for(int i=0;i<32;i++)
+		{
+			DataBuffer3[i] = rand()%100+1;
+		}
+		DataBuffer3[0] = 'c';
+	//Add flag_buffer to DataBuffer;
+	return DataBuffer3;
+}
+
 /**
 * @brief Clear data
 * This function sets all fields in pck1 to 0.
@@ -162,8 +202,8 @@ void Packet_1::Clear_Packet()
 
 uint8_t * States::Build_State_Message()
 {
-	Data_Buffer1[0] = 'a';
-	Data_Buffer1[1] = 1;//APPS State etc...
+	dev_states[0] = 'a';
+	dev_states[1] = 1;//APPS State etc...
 	/*
 	 *
 	 *
@@ -172,7 +212,9 @@ uint8_t * States::Build_State_Message()
 	 *
 	 *
 	 */
-	return Data_Buffer1;
+	memset(dev_states, 0, sizeof(dev_states));
+	dev_states[0] = 's';
+	return dev_states;
 }
 
 void APPS_Parser(Packet_1 *pck1, Can_Message *msg1, States *st1)
@@ -180,7 +222,7 @@ void APPS_Parser(Packet_1 *pck1, Can_Message *msg1, States *st1)
 	//Update flag_buffer
 	pck1->flag_buffer = pck1->flag_buffer | 0x01;
 	//Parse Data
-	pck1->APPS = msg1->return_Data(0) << 8 | msg1->return_Data(1);
+	pck1->Pedal_Position = msg1->return_Data(0) << 8 | msg1->return_Data(1);
 	//Parse device state
 	st1->APPS_State = msg1->return_Data(8);
 }

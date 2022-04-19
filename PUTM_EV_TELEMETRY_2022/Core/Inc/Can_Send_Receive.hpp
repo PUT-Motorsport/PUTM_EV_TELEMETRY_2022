@@ -19,13 +19,6 @@ private:
 	uint8_t DLC;
 	uint8_t* Data;
 public:
-	Can_Message()
-	{
-		ID   = 0;
-		DLC  = 0;
-		Data = 0;
-	}
-	~Can_Message();
 //////////Returns/////////////
 	uint16_t return_ID()
 	{

@@ -17,9 +17,6 @@ extern CAN_HandleTypeDef hcan1;
 */
 bool Can_Message::Build_Message()
 {
-	CAN_RxHeaderTypeDef RxHeader_HCAN1;
-	uint8_t RxData[8];
-
 	HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO0, &RxHeader_HCAN1, RxData);
 	ID = RxHeader_HCAN1.StdId;
 	if(ID == 0x001)
@@ -27,7 +24,6 @@ bool Can_Message::Build_Message()
 		return false;
 	}
 	DLC = RxHeader_HCAN1.DLC;
-	Data = RxData;
 	HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
 	return true;
 }

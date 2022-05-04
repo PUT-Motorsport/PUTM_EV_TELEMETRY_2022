@@ -17,7 +17,8 @@ class Can_Message
 private:
 	uint16_t ID;
 	uint8_t DLC;
-	uint8_t* Data;
+	uint8_t RxData[8];
+	CAN_RxHeaderTypeDef RxHeader_HCAN1;
 public:
 //////////Returns/////////////
 	uint16_t return_ID()
@@ -26,7 +27,7 @@ public:
 	}
 	uint8_t return_Data(int i)
 	{
-		return Data[i];
+		return RxData[i];
 	}
 //////////Methods/////////////
 	bool Build_Message();

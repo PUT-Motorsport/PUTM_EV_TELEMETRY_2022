@@ -21,7 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdlib.h>
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -48,13 +49,14 @@ uint8_t RxAddress[] = {0xEE,0xDD,0xCC,0xBB,0xAA};
 uint8_t RxData[32];
 uint8_t next_line[] = "\n\r";
 uint8_t space[] = " ";
+uint8_t test[3];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_LPUART1_UART_Init(void);
 static void MX_SPI1_Init(void);
+static void MX_LPUART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -92,8 +94,8 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_LPUART1_UART_Init();
   MX_SPI1_Init();
+  MX_LPUART1_UART_Init();
   /* USER CODE BEGIN 2 */
   NRF24_Init();
   NRF24_RxMode(RxAddress, 10);
@@ -110,14 +112,13 @@ int main(void)
 	 	  {
 	 		  NRF24_Receive(RxData);
 	 		  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);
-	 		  /*
 	 		  for(int j=0;j<32;j++)
 	 		  {
-	 			  HAL_UART_Transmit(&hlpuart1, RxData[j], 1, 1000);
-	 			  //HAL_UART_Transmit(&hlpuart1, space, 1, 1000);
+	 			  itoa (RxData[j],test,10);
+	 			  HAL_UART_Transmit(&hlpuart1, test, 4, 1000);
+	 			  HAL_UART_Transmit(&hlpuart1, space, sizeof(space), 1000);
 	 		  }
-	 		  */
-	 		 HAL_UART_Transmit(&hlpuart1, RxData, 32, 10);
+	 		 //HAL_UART_Transmit(&hlpuart1, RxData, sizeof(RxData), 100);
 	 		 HAL_UART_Transmit(&hlpuart1, next_line,  sizeof(next_line),  10);
 	 	  }
   }

@@ -24,7 +24,7 @@
 /* USER CODE BEGIN Includes */
 #include  "Can_Send_Receive.hpp"
 #include "Radio_Control.hpp"
-#include "Build_Packet.hpp"
+#include "Data_Handling.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -50,6 +50,8 @@ SPI_HandleTypeDef hspi1;
 TIM_HandleTypeDef htim2;
 
 /* USER CODE BEGIN PV */
+
+uint8_t Sending_Delay = 20;
 uint8_t Can_Interrupt_flag = 0;
 uint8_t TIM_IRQ_Mode_flag = 0;
 uint8_t TestData[8] = {1,2,3,4,5,6,7,8};
@@ -63,26 +65,15 @@ static void MX_CAN1_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
-void Send(Packet_1 pck1, States st1)
-{
-	HAL_TIM_Base_Stop(&htim2);
 
-	Send_Data(pck1.Prepare_Data1(pck1.Return_flag_buffer()));
-	Send_Data(pck1.Prepare_Data2(pck1.Return_flag_buffer()));
-	Send_Data(pck1.Prepare_Data3(pck1.Return_flag_buffer()));
-	/*
-	if(Send_Data(st1->Build_State_Message()) == false)
-	{
-		 HAL_GPIO_WritePin(GPIOC, LED_RED_Pin, GPIO_PIN_RESET);
-	}
-	*/
-	//pck1->Clear_Packet();
-	HAL_TIM_Base_Start(&htim2);
-}
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+Data_management handler1;
+//States st1;
+Can_Message msg1;
+//Packet_1 pck1;
 
 /* USER CODE END 0 */
 
@@ -122,12 +113,6 @@ int main(void)
   HAL_GPIO_WritePin(GPIOC, LED_GREEN_Pin, GPIO_PIN_SET);
   HAL_GPIO_WritePin(GPIOC, LED_RED_Pin, GPIO_PIN_SET);
 
-  Can_Message msg1;
-  Packet_1 pck1;
-  States st1;
-
-  Create_parsing_array();
-
   Open_Filter();
 
   CAN_Init();
@@ -156,16 +141,32 @@ int main(void)
  	  /*
  	   * Regular state of the code, used to receive, pack and send data
  	   */
-	  Send_Message(0x0A, 8, TestData);
+	  Send_Message(0x05, 8, TestData);
 	  HAL_Delay(1);
  	  if(Can_Interrupt_flag  == 1)
  	  {
  		  msg1.Build_Message();
- 		  pck1.Choose_Parser(msg1, pck1, st1);
- 		  if(pck1.Return_flag_buffer() == 1)
+ 		  handler1.Choose_Parser(msg1);
+ 		  if(handler1.DataBuffer1_flag == 1)
  		  {
- 			  //Send
- 			  Send(pck1, st1);
+ 			  Send_Data(handler1.Prepare_DataBuffer1());
+ 			  HAL_Delay(Sending_Delay);
+ 			  Send_Data(handler1.Prepare_StateBuffer1());
+ 			 HAL_Delay(Sending_Delay);
+ 		  }
+ 		  if(handler1.DataBuffer2_flag == 0)
+ 		  {
+ 			 Send_Data(handler1.Prepare_DataBuffer2());
+ 			 HAL_Delay(Sending_Delay);
+ 			Send_Data(handler1.Prepare_StateBuffer2());
+ 			 HAL_Delay(Sending_Delay);
+ 		  }
+ 		  if(handler1.DataBuffer3_flag == 0)
+ 		  {
+ 			 Send_Data(handler1.Prepare_DataBuffer3());
+ 			 HAL_Delay(Sending_Delay);
+ 			Send_Data(handler1.Prepare_StateBuffer3());
+ 			 HAL_Delay(Sending_Delay);
  		  }
  		  HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
  	  }
@@ -174,7 +175,6 @@ int main(void)
  	   */
  	  if(TIM_IRQ_Mode_flag == 1)
  	  {
- 		  Send(pck1, st1);
  		  TIM_IRQ_Mode_flag = 0;
  	  }
  	  Can_Interrupt_flag = 0;

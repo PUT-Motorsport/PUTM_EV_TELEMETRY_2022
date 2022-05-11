@@ -1,25 +1,25 @@
 #pragma once
 
-#include "etl/vector.h"
 #include "Can_Send_Receive.hpp"
 #include "Frame_IDs.hpp"
+#include "etl/vector.h"
 
 #define DATA_FULL 1024
 #define num_of_frames 23
 
 using namespace etl;
 
-typedef vector<class pointer, num_of_frames> Parsing_Vector;//define parsing vector
+typedef vector<class pointer, num_of_frames> Parsing_Vector; // define parsing vector
 /* Define all parsing functions */
 
-void APPS_Main_Parser				(Can_Message msg1);
-void BMS_LV_Main_Parser				(Can_Message msg1);
-void BMS_LV_Temps_Parser			(Can_Message msg1);
-void Dash_Tcs_Frame_Parser			(Can_Message msg1);
-void TC_Main_Parser					(Can_Message msg1);
-void TC_Rear_Suspension				(Can_Message msg1);
-void AQ_Card_Main_Parser			(Can_Message msg1);
-void BMS_HV_Main_Parser				(Can_Message msg1);
+void APPS_Main_Parser(Can_Message msg1);
+void BMS_LV_Main_Parser(Can_Message msg1);
+void BMS_LV_Temps_Parser(Can_Message msg1);
+void Dash_Tcs_Frame_Parser(Can_Message msg1);
+void TC_Main_Parser(Can_Message msg1);
+void TC_Rear_Suspension(Can_Message msg1);
+void AQ_Card_Main_Parser(Can_Message msg1);
+void BMS_HV_Main_Parser(Can_Message msg1);
 
 /*
  * Data mangement class:
@@ -28,49 +28,61 @@ void BMS_HV_Main_Parser				(Can_Message msg1);
  * - Keeps track of arriving frames.
  */
 
-class Data_management {
+class Data_management
+{
 private:
-	//Buffers containing data. Used to pass data to radio.
-    uint8_t DataBuffer1[32] = { 0 };
-    uint8_t DataBuffer2[32] = { 0 };
-    uint8_t DataBuffer3[32] = { 0 };
-    //Buffers containing states. Used to pass states to radio.
-    uint8_t StateBuffer1[32] = { 0 };
-    uint8_t StateBuffer2[32] = { 0 };
-    uint8_t StateBuffer3[32] = { 0 };
+	// Buffers containing data. Used to pass data to radio.
+	uint8_t DataBuffer1[32] = {0};
+	uint8_t DataBuffer2[32] = {0};
+	uint8_t DataBuffer3[32] = {0};
+	// Buffers containing states. Used to pass states to radio.
+	uint8_t StateBuffer1[32] = {0};
+	uint8_t StateBuffer2[32] = {0};
+	uint8_t StateBuffer3[32] = {0};
+
 public:
-    //flags used to track arriving frames. Each bit represent corresponding frame.
-    uint32_t DataBuffer1_flag = 0;
-    uint32_t DataBuffer2_flag = 0;
-    uint32_t DataBuffer3_flag = 0;
-    /* Methods */
-    uint8_t * Prepare_DataBuffer1();
-    uint8_t * Prepare_DataBuffer2();
-    uint8_t * Prepare_DataBuffer3();
+	// flags used to track arriving frames. Each bit represent corresponding
+	// frame.
+	uint32_t DataBuffer1_flag = 0;
+	uint32_t DataBuffer2_flag = 0;
+	uint32_t DataBuffer3_flag = 0;
+	/* Methods */
+	uint8_t* Prepare_DataBuffer1();
+	uint8_t* Prepare_DataBuffer2();
+	uint8_t* Prepare_DataBuffer3();
 
-    uint8_t * Prepare_StateBuffer1();
-    uint8_t * Prepare_StateBuffer2();
-    uint8_t * Prepare_StateBuffer3();
+	uint8_t* Prepare_StateBuffer1();
+	uint8_t* Prepare_StateBuffer2();
+	uint8_t* Prepare_StateBuffer3();
 
-    void Init();
-    void Choose_Parser(Can_Message msg1);
+	void Init();
+	void Choose_Parser(Can_Message msg1);
 
-    void Update_DataBuffer1_flag(uint8_t update) {DataBuffer1_flag = DataBuffer1_flag | update;}
-    void Update_DataBuffer2_flag(uint8_t update) {DataBuffer1_flag = DataBuffer1_flag | update;}
-    void Update_DataBuffer3_flag(uint8_t update) {DataBuffer1_flag = DataBuffer1_flag | update;}
+	void Update_DataBuffer1_flag(uint8_t update)
+	{
+		DataBuffer1_flag = DataBuffer1_flag | update;
+	}
+	void Update_DataBuffer2_flag(uint8_t update)
+	{
+		DataBuffer1_flag = DataBuffer1_flag | update;
+	}
+	void Update_DataBuffer3_flag(uint8_t update)
+	{
+		DataBuffer1_flag = DataBuffer1_flag | update;
+	}
 
-    uint8_t * Return_Data_Buffer1()
-    {
-    	return DataBuffer1;
-    }
-    uint8_t * Return_Data_Buffer2()
-    {
-        return DataBuffer2;
-    }
-    uint8_t * Return_Data_Buffer3()
-    {
-        return DataBuffer3;
-    }
+	uint8_t* Return_Data_Buffer1()
+	{
+		return DataBuffer1;
+	}
+	uint8_t* Return_Data_Buffer2()
+	{
+		return DataBuffer2;
+	}
+	uint8_t* Return_Data_Buffer3()
+	{
+		return DataBuffer3;
+	}
 };
 
 /*
@@ -80,13 +92,15 @@ public:
  * 	 - ID  - ID of corresponding device
  * 	 - PTR - Pointer to parsing function, uniqe for each device.
  * - These objects are stored in vector called parsing vector.
- * - Parsing vector is then used to help match incoming CAN frame with corresponding parsing function.
+ * - Parsing vector is then used to help match incoming CAN frame with
+ * corresponding parsing function.
  */
 
-class pointer {
+class pointer
+{
 public:
-    void (*PTR)(Can_Message msg1);
-    int ID;
+	void (*PTR)(Can_Message msg1);
+	int ID;
 };
 
 /*Below are objects storing data from specific devices */
@@ -95,35 +109,51 @@ public:
  * APPS class:
  * - Used to store data and state of Apps device.
  */
-class APPS : public Data_management {
+class APPS : public Data_management
+{
 private:
 	uint16_t Pedal_Position;
-    uint8_t state;
+	uint8_t diff;
+	uint8_t state;
+
 public:
-     //void(*Apps_ptr)(Can_Message msg1) = APPS_Parser;
-     pointer apps_main;
-     APPS()
-     {
-    	 Pedal_Position = 0;
-         state = 0;
-         apps_main.ID = Apps_main;
-         apps_main.PTR = APPS_Main_Parser;
-     }
-     uint16_t retrun_Pedal_Position() {return Pedal_Position;}
-     uint8_t  return_state() {return state;}
-     friend void APPS_Main_Parser(Can_Message msg1);
+	// void(*Apps_ptr)(Can_Message msg1) = APPS_Parser;
+	pointer apps_main;
+	APPS()
+	{
+		Pedal_Position = 0;
+		state = 0;
+		diff = 0;
+		apps_main.ID = Apps_main;
+		apps_main.PTR = APPS_Main_Parser;
+	}
+	uint16_t retrun_Pedal_Position()
+	{
+		return Pedal_Position;
+	}
+	uint8_t return_Diff()
+	{
+		return diff;
+	}
+	uint8_t return_state()
+	{
+		return state;
+	}
+	friend void APPS_Main_Parser(Can_Message msg1);
 };
 /*
  * BMS_LV class:
  * - Used to store data and state of BMS LV device.
  */
-class BMS_LV : public Data_management{
+class BMS_LV : public Data_management
+{
 private:
 	uint16_t Voltage_Sum;
-	uint8_t  Soc;
-	uint8_t  Temps;
-	uint8_t  Current;
-	uint8_t  state;
+	uint8_t Soc;
+	uint8_t Temps;
+	uint8_t Current;
+	uint8_t state;
+
 public:
 	pointer bms_lv_main;
 	pointer bms_lv_temps;
@@ -141,30 +171,49 @@ public:
 		bms_lv_temps.ID = BMS_LV_temperatures;
 		bms_lv_temps.PTR = BMS_LV_Temps_Parser;
 	}
-	uint16_t return_Voltage_Sum() {return Voltage_Sum;}
-	uint8_t  return_Soc()         {return Soc;}
-	uint8_t  return_Temps()       {return Temps;}
-	uint8_t  return_Current() 	  {return Current;}
-	uint8_t  return_state() 	  {return state;}
-	friend void BMS_LV_Main_Parser	(Can_Message msg1);
-	friend void BMS_LV_Temps_Parser	(Can_Message msg1);
+	uint16_t return_Voltage_Sum()
+	{
+		return Voltage_Sum;
+	}
+	uint8_t return_Soc()
+	{
+		return Soc;
+	}
+	uint8_t return_Temps()
+	{
+		return Temps;
+	}
+	uint8_t return_Current()
+	{
+		return Current;
+	}
+	uint8_t return_state()
+	{
+		return state;
+	}
+	friend void BMS_LV_Main_Parser(Can_Message msg1);
+	friend void BMS_LV_Temps_Parser(Can_Message msg1);
 };
 /*
  * Traction Control class:
  * - Used to store data and state of Traction Control device.
+ *
  */
-class Traction_Control : public Data_management{
+
+class Traction_Control : public Data_management
+{
 private:
 	uint16_t Wehicle_Speed;
-	uint8_t  Water_Temp;
-	uint8_t  Water_pressure;
-	uint8_t  Motor_Current;
-	uint8_t  TS_Bools;
-	uint8_t  TC_Intensity;
+	uint8_t Water_Temp;
+	uint8_t Water_pressure;
+	uint8_t Motor_Current;
+	uint8_t TS_Bools;
+	uint8_t TC_Intensity;
 	uint16_t Adc_Susp_Right_r;
 	uint16_t Adc_Susp_Left_r;
 	uint16_t Acc_Lateral;
 	uint16_t Acc_Longitunal;
+
 public:
 	pointer dash_tcs_frame;
 	pointer tc_main;
@@ -190,19 +239,47 @@ public:
 
 		tc_rear_suspension.ID = TC_rear_suspension;
 		tc_rear_suspension.PTR = TC_Rear_Suspension;
-
-
 	}
-	uint16_t return_Wehicle_Speed() 	{return Wehicle_Speed;}
-	uint8_t  return_Water_Temp()		{return Water_Temp;}
-	uint8_t  return_Water_pressure()	{return Water_pressure;}
-	uint8_t  return_Motor_Current()		{return Motor_Current;}
-	uint8_t  return_TS_Bools()			{return TS_Bools;}
-	uint8_t  return_TC_Intensity()		{return TC_Intensity;}
-	uint16_t return_Adc_Susp_Right_r()	{return Adc_Susp_Right_r;}
-	uint16_t return_Adc_Susp_Left_r()	{return Adc_Susp_Left_r;}
-	uint16_t return_Acc_Lateral()		{return Acc_Lateral;}
-	uint16_t return_Acc_Longitunal()	{return Acc_Longitunal;}
+	uint16_t return_Wehicle_Speed()
+	{
+		return Wehicle_Speed;
+	}
+	uint8_t return_Water_Temp()
+	{
+		return Water_Temp;
+	}
+	uint8_t return_Water_pressure()
+	{
+		return Water_pressure;
+	}
+	uint8_t return_Motor_Current()
+	{
+		return Motor_Current;
+	}
+	uint8_t return_TS_Bools()
+	{
+		return TS_Bools;
+	}
+	uint8_t return_TC_Intensity()
+	{
+		return TC_Intensity;
+	}
+	uint16_t return_Adc_Susp_Right_r()
+	{
+		return Adc_Susp_Right_r;
+	}
+	uint16_t return_Adc_Susp_Left_r()
+	{
+		return Adc_Susp_Left_r;
+	}
+	uint16_t return_Acc_Lateral()
+	{
+		return Acc_Lateral;
+	}
+	uint16_t return_Acc_Longitunal()
+	{
+		return Acc_Longitunal;
+	}
 
 	friend void Dash_Tcs_Frame_Parser(Can_Message msg1);
 	friend void TC_Main_Parser(Can_Message msg1);
@@ -212,13 +289,15 @@ public:
  * AQ Card class:
  * - Used to store data and state of Data acqusition card device.
  */
-class AQ_Card : public Data_management{
+class AQ_Card : public Data_management
+{
 private:
 	uint16_t Adc_Susp_Right_f;
 	uint16_t Adc_Susp_Left_f;
-	uint8_t  Break_Pressure_f;
-	uint8_t  Break_Pressure_r;
+	uint8_t Break_Pressure_f;
+	uint8_t Break_Pressure_r;
 	uint16_t Air_Flow_Vel;
+
 public:
 	pointer aq_card_main;
 	AQ_Card()
@@ -232,11 +311,26 @@ public:
 		aq_card_main.ID = Aq_card_main;
 		aq_card_main.PTR = AQ_Card_Main_Parser;
 	}
-	uint16_t return_Adc_Susp_Right_f()	{return Adc_Susp_Right_f;}
-	uint16_t return_Adc_Susp_Left_f()	{return Adc_Susp_Left_f;}
-	uint8_t  return_Break_Pressure_f()	{return Break_Pressure_f;}
-	uint8_t  return_Break_Pressure_r()	{return Break_Pressure_r;}
-	uint16_t return_Air_Flow_Vel()		{return Air_Flow_Vel;}
+	uint16_t return_Adc_Susp_Right_f()
+	{
+		return Adc_Susp_Right_f;
+	}
+	uint16_t return_Adc_Susp_Left_f()
+	{
+		return Adc_Susp_Left_f;
+	}
+	uint8_t return_Break_Pressure_f()
+	{
+		return Break_Pressure_f;
+	}
+	uint8_t return_Break_Pressure_r()
+	{
+		return Break_Pressure_r;
+	}
+	uint16_t return_Air_Flow_Vel()
+	{
+		return Air_Flow_Vel;
+	}
 
 	friend void AQ_Card_Main_Parser(Can_Message msg1);
 };
@@ -244,13 +338,15 @@ public:
  * BMS HV class:
  * - Used to store data and state of BMS HV device.
  */
-class BMS_HV : Data_management{
+class BMS_HV : Data_management
+{
 private:
 	uint16_t Voltage_Sum;
-	uint8_t  Soc;
-	uint8_t  Temp_Max;
-	uint8_t  Temps;
-	uint8_t  Current;
+	uint8_t Soc;
+	uint8_t Temp_Max;
+	uint8_t Temps;
+	uint8_t Current;
+
 public:
 	pointer bms_hv_main;
 	BMS_HV()
@@ -264,15 +360,31 @@ public:
 		bms_hv_main.ID = BMS_HV_main;
 		bms_hv_main.PTR = BMS_HV_Main_Parser;
 	}
-	uint16_t return_Voltage_Sum()	{return Voltage_Sum;}
-	uint8_t  return_Soc()			{return Soc;}
-	uint8_t  return_Temp_Max()		{return Temp_Max;}
-	uint8_t  return_Temps()			{return Temps;}
-	uint8_t  return_Current()		{return Current;}
+	uint16_t return_Voltage_Sum()
+	{
+		return Voltage_Sum;
+	}
+	uint8_t return_Soc()
+	{
+		return Soc;
+	}
+	uint8_t return_Temp_Max()
+	{
+		return Temp_Max;
+	}
+	uint8_t return_Temps()
+	{
+		return Temps;
+	}
+	uint8_t return_Current()
+	{
+		return Current;
+	}
 
 	friend void BMS_HV_Main_Parser(Can_Message msg1);
 };
-class SF : Data_management{
+class SF : Data_management
+{
 private:
 	uint8_t combined_states;
 	uint16_t sum_of_currents;
@@ -329,38 +441,15 @@ private:
 	uint16_t nuc_current;
 };
 
-
-
-
-
-class Wheel_Temps : Data_management{
+class Wheel_Temps : Data_management
+{
 private:
 	uint8_t Wheel_Temp;
 	uint8_t state;
-
-
-
 };
-class Steering_Wheel : Data_management{
+class Steering_Wheel : Data_management
+{
 private:
 	uint16_t angle;
 	uint8_t state;
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

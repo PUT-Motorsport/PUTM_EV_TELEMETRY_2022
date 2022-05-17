@@ -43,9 +43,9 @@ private:
 public:
 	// flags used to track arriving frames. Each bit represent corresponding
 	// frame.
-	uint32_t DataBuffer1_flag = 0;
-	uint32_t DataBuffer2_flag = 0;
-	uint32_t DataBuffer3_flag = 0;
+	uint16_t DataBuffer1_flag = 0;
+	uint16_t DataBuffer2_flag = 0;
+	uint16_t DataBuffer3_flag = 0;
 	/* Methods */
 	uint8_t* Prepare_DataBuffer1();
 	uint8_t* Prepare_DataBuffer2();
@@ -54,6 +54,7 @@ public:
 	uint8_t* Prepare_StateBuffer1();
 	uint8_t* Prepare_StateBuffer2();
 	uint8_t* Prepare_StateBuffer3();
+
 
 	void Init();
 	void Choose_Parser(Can_Message msg1);
@@ -83,6 +84,10 @@ public:
 	{
 		return DataBuffer3;
 	}
+
+	void Clear_msg1();
+	void Clear_msg2();
+	void Clear_msg3();
 };
 
 /*
@@ -124,7 +129,7 @@ public:
 		Pedal_Position = 0;
 		state = 0;
 		diff = 0;
-		apps_main.ID = Apps_main;
+		apps_main.ID = Apps_main2;
 		apps_main.PTR = APPS_Main_Parser;
 	}
 	uint16_t retrun_Pedal_Position()
@@ -138,6 +143,12 @@ public:
 	uint8_t return_state()
 	{
 		return state;
+	}
+	void Clear_APPS()
+	{
+		Pedal_Position = 0;
+		state = 0;
+		diff = 0;
 	}
 	friend void APPS_Main_Parser(Can_Message msg1);
 };
@@ -165,10 +176,10 @@ public:
 		Current = 0;
 		state = 0;
 
-		bms_lv_main.ID = BMS_LV_main;
+		bms_lv_main.ID = BMS_LV_main2;
 		bms_lv_main.PTR = BMS_LV_Main_Parser;
 
-		bms_lv_temps.ID = BMS_LV_temperatures;
+		bms_lv_temps.ID = BMS_LV_temperatures2;
 		bms_lv_temps.PTR = BMS_LV_Temps_Parser;
 	}
 	uint16_t return_Voltage_Sum()
@@ -231,13 +242,13 @@ public:
 		Acc_Lateral = 0;
 		Acc_Longitunal = 0;
 
-		dash_tcs_frame.ID = Dash_tcs_frame;
+		dash_tcs_frame.ID = Dash_tcs_frame2;
 		dash_tcs_frame.PTR = Dash_Tcs_Frame_Parser;
 
-		tc_main.ID = TC_main;
+		tc_main.ID = TC_main2;
 		tc_main.PTR = TC_Main_Parser;
 
-		tc_rear_suspension.ID = TC_rear_suspension;
+		tc_rear_suspension.ID = TC_rear_suspension2;
 		tc_rear_suspension.PTR = TC_Rear_Suspension;
 	}
 	uint16_t return_Wehicle_Speed()
@@ -308,7 +319,7 @@ public:
 		Break_Pressure_r = 0;
 		Air_Flow_Vel = 0;
 
-		aq_card_main.ID = Aq_card_main;
+		aq_card_main.ID = Aq_card_main2;
 		aq_card_main.PTR = AQ_Card_Main_Parser;
 	}
 	uint16_t return_Adc_Susp_Right_f()
@@ -357,7 +368,7 @@ public:
 		Temps = 0;
 		Current = 0;
 
-		bms_hv_main.ID = BMS_HV_main;
+		bms_hv_main.ID = BMS_HV_main2;
 		bms_hv_main.PTR = BMS_HV_Main_Parser;
 	}
 	uint16_t return_Voltage_Sum()

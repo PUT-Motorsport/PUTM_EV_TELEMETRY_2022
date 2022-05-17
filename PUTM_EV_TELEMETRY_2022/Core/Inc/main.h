@@ -65,6 +65,10 @@ void Error_Handler(void);
 #define LED_GREEN_GPIO_Port GPIOC
 #define NRF24_CE_Pin GPIO_PIN_0
 #define NRF24_CE_GPIO_Port GPIOB
+#define LED_ORANGE_Pin GPIO_PIN_6
+#define LED_ORANGE_GPIO_Port GPIOC
+#define LED_AUX_Pin GPIO_PIN_7
+#define LED_AUX_GPIO_Port GPIOC
 /* USER CODE BEGIN Private defines */
 #define PACKET_FULL 1023
 /* USER CODE END Private defines */

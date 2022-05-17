@@ -25,13 +25,14 @@
 #include "Can_Send_Receive.hpp"
 #include "Data_Handling.hpp"
 #include "Radio_Control.hpp"
+#include "lib/can_interface.hpp"
+#include "LEDs.c"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 CAN_FilterTypeDef flitr1;
 CAN_RxHeaderTypeDef RxHeader_CAN1;
-RTC_TimeTypeDef time1;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -60,8 +61,13 @@ TIM_HandleTypeDef htim5;
 /* USER CODE BEGIN PV */
 
 uint8_t Sending_Delay = 20;
+
 uint8_t Can_Interrupt_flag = 0;
-uint8_t TIM_IRQ_Mode_flag = 0;
+
+uint8_t TIM_IRQ_Mode_flag_1 = 0;
+uint8_t TIM_IRQ_Mode_flag_2 = 0;
+uint8_t TIM_IRQ_Mode_flag_3 = 0;
+
 uint8_t TestData[8] = {1, 2, 3, 4, 5, 6, 7, 8};
 
 /* USER CODE END PV */
@@ -84,10 +90,7 @@ static void MX_TIM5_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 Data_management handler1;
-//States st1;
 Can_Message msg1;
-//Packet_1 pck1;
-
 /* USER CODE END 0 */
 
 /**
@@ -128,8 +131,8 @@ int main(void)
   MX_TIM5_Init();
   /* USER CODE BEGIN 2 */
 
-	HAL_GPIO_WritePin(GPIOC, LED_GREEN_Pin, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(GPIOC, LED_RED_Pin, GPIO_PIN_SET);
+    Clear_All();
+    Start();
 
 	Open_Filter();
 
@@ -144,8 +147,13 @@ int main(void)
 	{
 		HAL_GPIO_WritePin(GPIOC, LED_GREEN_Pin, GPIO_PIN_RESET);
 	}
-	//HAL_TIM_Base_Start_IT(&htim2);
-	// HAL_RTC_GetTime(&hrtc, &time1, RTC_FORMAT_BIN);
+
+	/*
+	HAL_TIM_Base_Start_IT(&htim2);
+	HAL_TIM_Base_Start_IT(&htim3);
+	HAL_TIM_Base_Start_IT(&htim4);
+	HAL_TIM_Base_Start_IT(&htim5);
+	*/
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -160,13 +168,16 @@ int main(void)
  	   */
 		Send_Message(0x05, 8, TestData);
 		HAL_Delay(1);
+
+		auto apps = PUTM_CAN::can.get_apps_main();
+
 		if(Can_Interrupt_flag == 1)
 		{
 			msg1.Build_Message();
 			handler1.Choose_Parser(msg1);
 			if(handler1.DataBuffer1_flag == 1)
 			{
-				Send_Data(handler1.Prepare_DataBuffer1());
+				if(Send_Data(handler1.Prepare_DataBuffer1()) == false){}
 				HAL_Delay(Sending_Delay);
 				Send_Data(handler1.Prepare_StateBuffer1());
 				HAL_Delay(Sending_Delay);
@@ -190,10 +201,25 @@ int main(void)
 		/*
  	   * TIM_IRQ_Mode. Used when not enough data arrives in sufficient time.
  	   */
-		if(TIM_IRQ_Mode_flag == 1)
+		if(TIM_IRQ_Mode_flag_1 == 1)
 		{
-			TIM_IRQ_Mode_flag = 0;
+			Send_Data(handler1.Prepare_DataBuffer1());
+			HAL_Delay(Sending_Delay);
+			Send_Data(handler1.Prepare_StateBuffer1());
+			//zero things
+			handler1.Clear_msg1();
+			TIM_IRQ_Mode_flag_1 = 0;
 		}
+		if(TIM_IRQ_Mode_flag_2 == 1)
+		{
+			TIM_IRQ_Mode_flag_2 = 0;
+		}
+		if(TIM_IRQ_Mode_flag_3 == 1)
+		{
+			TIM_IRQ_Mode_flag_3 = 0;
+		}
+
+
 		Can_Interrupt_flag = 0;
 		HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
 	}
@@ -396,8 +422,8 @@ static void MX_RTC_Init(void)
 
   /** Initialize RTC and set the Time and Date
   */
-  sTime.Hours = 11;
-  sTime.Minutes = 55;
+  sTime.Hours = 17;
+  sTime.Minutes = 13;
   sTime.Seconds = 0;
   sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
   sTime.StoreOperation = RTC_STOREOPERATION_RESET;
@@ -659,7 +685,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(NRF24_CSN_GPIO_Port, NRF24_CSN_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, LED_RED_Pin|LED_GREEN_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, LED_RED_Pin|LED_GREEN_Pin|LED_ORANGE_Pin|LED_AUX_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(NRF24_CE_GPIO_Port, NRF24_CE_Pin, GPIO_PIN_RESET);
@@ -671,8 +697,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(NRF24_CSN_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LED_RED_Pin LED_GREEN_Pin */
-  GPIO_InitStruct.Pin = LED_RED_Pin|LED_GREEN_Pin;
+  /*Configure GPIO pins : LED_RED_Pin LED_GREEN_Pin LED_ORANGE_Pin LED_AUX_Pin */
+  GPIO_InitStruct.Pin = LED_RED_Pin|LED_GREEN_Pin|LED_ORANGE_Pin|LED_AUX_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

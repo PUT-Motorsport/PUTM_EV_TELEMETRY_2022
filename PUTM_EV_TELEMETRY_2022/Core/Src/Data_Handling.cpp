@@ -178,6 +178,11 @@ uint8_t* Data_management::Prepare_StateBuffer3()
 	return StateBuffer3;
 }
 
+void Data_management::Clear_msg1()
+{
+	memset(DataBuffer1, 0, sizeof(DataBuffer1));
+	apps1.Clear_APPS();
+}
 void APPS_Main_Parser(Can_Message msg1)
 {
 	handler1.Update_DataBuffer1_flag(0x01);

@@ -8,7 +8,7 @@
 #ifndef INC_CAN_H_
 #define INC_CAN_H_
 
-#include "stm32l4xx_hal.h"
+#include <main.h>
 
 void Open_Filter(void);
 void Close_Filter(void);

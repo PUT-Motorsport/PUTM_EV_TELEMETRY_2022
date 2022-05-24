@@ -70,7 +70,7 @@ void Error_Handler(void);
 #define LED_AUX_Pin GPIO_PIN_7
 #define LED_AUX_GPIO_Port GPIOC
 /* USER CODE BEGIN Private defines */
-#define PACKET_FULL 1023
+
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

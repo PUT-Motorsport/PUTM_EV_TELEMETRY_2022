@@ -17,13 +17,14 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include <Parsers.h>
 #include "main.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
 #include <stdlib.h>
-#include "Parsers.h"
+#include "NRF24L01.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -48,12 +49,8 @@ SPI_HandleTypeDef hspi1;
 /* USER CODE BEGIN PV */
 uint8_t RxAddress[] = {0xEE, 0xDD, 0xCC, 0xBB, 0xAA};
 uint8_t RxData[32];
+uint8_t Frame_by_frame = 0;
 
-uint8_t next_line[] = "\n\r";
-uint8_t space[] = "/";
-
-uint8_t test[4];
-uint16_t test16 = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -116,11 +113,30 @@ int main(void)
 		{
 			NRF24_Receive(RxData);
 			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);
-			if(RxData[0] == 65)
-			{
-				Message_65(RxData);
-			}
+			Frame_by_frame = RxData[10] & RxData[11];
 
+			if(Frame_by_frame == 0xff)
+			{
+				Parse(RxData);
+			}
+			else
+			{
+				switch(RxData[0])
+				{
+					case 65:
+						Message_65(RxData);
+						break;
+					case 68:
+						Message_68(RxData);
+						break;
+					case 66:
+						Message_66(RxData);
+						break;
+					case 69:
+						Message_69(RxData);
+						break;
+				}
+			}
 		/*
 		if(RxData[0] == 65)
 		{
@@ -129,7 +145,6 @@ int main(void)
 
 							test16 = RxData[j] << 8 | RxData[j + 1];
 							itoa(test16, test, 10);
-							printf("its a string");
 							HAL_UART_Transmit(&hlpuart1, test, 4, 1000);
 							HAL_UART_Transmit(&hlpuart1, space, sizeof(space), 1000);
 						}

@@ -6,7 +6,6 @@
  */
 
 #include "CAN.h"
-#include "stm32l4p5xx.h"
 
 extern CAN_HandleTypeDef hcan1;
 extern CAN_FilterTypeDef flitr1;

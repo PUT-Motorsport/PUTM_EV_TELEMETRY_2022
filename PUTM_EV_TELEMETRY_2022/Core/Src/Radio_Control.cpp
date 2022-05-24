@@ -7,6 +7,7 @@
 #include <Radio_Control.hpp>
 #include "NRF24L01.c"
 #include "NRF24L01.h"
+#include "LEDs.hpp"
 
 uint8_t TxAddress[5] = {0xEE,0xDD,0xCC,0xBB,0xAA};
 
@@ -38,11 +39,13 @@ bool Send_Data(uint8_t* pData)
 {
 	if(NRF24_Transmit(pData) == 1)
 	{
+		Clear_Radio_Warning();
 		return true;
 	}
 	else
 	{
 		Clear_retrasmission_flag();
+		Set_Radio_Warning();
 		return true;
 	}
 }

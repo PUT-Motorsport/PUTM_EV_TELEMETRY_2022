@@ -53,15 +53,16 @@ public:
 class __attribute__((packed)) Device_base {
   const uint32_t IDE : 12; // using 11 bits identifier
   const uint8_t DLC : 4;   // max size for data is 8 `bytes`
-
+  uint8_t POSITION : 2;
 protected:
   bool new_data : 1;
 
 public:
-  constexpr Device_base(uint32_t ide, uint8_t dlc)
-      : IDE{ide}, DLC{dlc}, new_data{false} {}
+  constexpr Device_base(uint32_t ide, uint8_t dlc, uint8_t position)
+      : IDE{ide}, DLC{dlc}, new_data{false}, POSITION{position} {}
   [[nodiscard]] constexpr uint32_t get_ID() { return IDE; }
   [[nodiscard]] constexpr uint8_t get_DLC() { return DLC; }
+  [[nodiscard]] constexpr uint8_t get_position() { return POSITION; }
   virtual void set_data(const Can_rx_message &m) = 0;
 
   [[nodiscard]] constexpr bool get_new_data() {
@@ -74,8 +75,8 @@ public:
 template <typename Device_data_type>
 class __attribute__((packed)) Device : public Device_base {
 public:
-  explicit constexpr Device(uint32_t ide)
-      : Device_base(ide, sizeof(Device_data_type)){};
+  explicit constexpr Device(uint32_t ide, uint8_t position)
+      : Device_base(ide, sizeof(Device_data_type), position){};
 
   Device_data_type data{};
 

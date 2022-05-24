@@ -5,23 +5,66 @@
  *      Author: wasyl
  */
 
-#include "Parsers.h"
+#include <Parsers.h>
 
 extern UART_HandleTypeDef hlpuart1;
 
 uint8_t UART_Buffer[10];
-
 uint8_t next_line2[] = "\n\r";
 uint8_t space2[] = "/";
 
+void Message_69(uint8_t RxData[])
+{
+	uint8_t Message_ID = RxData[0];
+	itoa(Message_ID, UART_Buffer, 10);
+	HAL_UART_Transmit(&hlpuart1, UART_Buffer, 2, 1000);
+
+	for(int i = 1; i <= 7; i++)
+	{
+		HAL_UART_Transmit(&hlpuart1, space2, sizeof(space2), 1000);
+		itoa(RxData[i], UART_Buffer, 10);
+		HAL_UART_Transmit(&hlpuart1, UART_Buffer, 2, 1000);
+	}
+	HAL_UART_Transmit(&hlpuart1, next_line2, sizeof(next_line2), 1000);
+}
+void Message_66(uint8_t RxData[])
+{
+	uint8_t Message_ID = RxData[0];
+	itoa(Message_ID, UART_Buffer, 10);
+	HAL_UART_Transmit(&hlpuart1, UART_Buffer, 2, 1000);
+	HAL_UART_Transmit(&hlpuart1, space2, sizeof(space2), 1000);
+	for(int i = 1; i < 32; i++)
+	{
+		itoa(RxData[i], UART_Buffer, 10);
+		HAL_UART_Transmit(&hlpuart1, UART_Buffer, 2, 1000);
+		HAL_UART_Transmit(&hlpuart1, space2, sizeof(space2), 1000);
+	}
+	HAL_UART_Transmit(&hlpuart1, next_line2, sizeof(next_line2), 1000);
+}
+void Message_68(uint8_t RxData[])
+{
+	uint8_t Message_ID = RxData[0];
+	itoa(Message_ID, UART_Buffer, 10);
+	HAL_UART_Transmit(&hlpuart1, UART_Buffer, 2, 1000);
+
+	for(int i = 1; i <= 7; i++)
+	{
+		HAL_UART_Transmit(&hlpuart1, space2, sizeof(space2), 1000);
+		itoa(RxData[i], UART_Buffer, 10);
+		HAL_UART_Transmit(&hlpuart1, UART_Buffer, 2, 1000);
+	}
+	HAL_UART_Transmit(&hlpuart1, next_line2, sizeof(next_line2), 1000);
+}
 void Message_65(uint8_t RxData[])
 {
+
 	uint8_t Message_ID = RxData[0];
 	itoa(Message_ID, UART_Buffer, 10);
 	HAL_UART_Transmit(&hlpuart1, UART_Buffer, 2, 1000);
 	HAL_UART_Transmit(&hlpuart1, space2, sizeof(space2), 1000);
 
 	uint16_t APPS_Position = RxData[1] << 8 | RxData[2];
+	itoa(Message_ID, UART_Buffer, 10);
 	itoa(APPS_Position, UART_Buffer, 10);
 	HAL_UART_Transmit(&hlpuart1, UART_Buffer, 4, 1000);
 	HAL_UART_Transmit(&hlpuart1, space2, sizeof(space2), 1000);
@@ -116,10 +159,8 @@ void Message_65(uint8_t RxData[])
 	HAL_UART_Transmit(&hlpuart1, UART_Buffer, 4, 1000);
 	HAL_UART_Transmit(&hlpuart1, space2, sizeof(space2), 1000);
 
-	uint16_t Flag_Buffer = RxData[25] << 8 | RxData[26];
+	uint8_t Flag_Buffer = RxData[27];
 	itoa(Flag_Buffer, UART_Buffer, 10);
-	HAL_UART_Transmit(&hlpuart1, UART_Buffer, 4, 1000);
+	HAL_UART_Transmit(&hlpuart1, UART_Buffer, 2, 1000);
 	HAL_UART_Transmit(&hlpuart1, next_line2, sizeof(next_line2), 1000);
-
-
 }

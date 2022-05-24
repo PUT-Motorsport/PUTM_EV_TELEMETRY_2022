@@ -5,7 +5,7 @@
  *      Author: Adam Wasilewski
  */
 
-#include "LEDs.h"
+#include "LEDs.hpp"
 
 void Set_Error()
 {
@@ -17,19 +17,19 @@ void Set_OK()
 	HAL_GPIO_WritePin(GPIOC, LED_RED_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOC, LED_GREEN_Pin, GPIO_PIN_RESET);
 }
-void Set_Warning()
+void Set_Radio_Warning()
 {
 	HAL_GPIO_WritePin(GPIOC, LED_ORANGE_Pin, GPIO_PIN_RESET);
 }
-void Clear_Warning()
+void Clear_Radio_Warning()
 {
 	HAL_GPIO_WritePin(GPIOC, LED_ORANGE_Pin, GPIO_PIN_SET);
 }
-void Set_AUX()
+void Set_CAN_Warning()
 {
 	HAL_GPIO_WritePin(GPIOC, LED_AUX_Pin, GPIO_PIN_RESET);
 }
-void Clear_AUX()
+void Clear_CAN_Warning()
 {
 	HAL_GPIO_WritePin(GPIOC, LED_AUX_Pin, GPIO_PIN_SET);
 }

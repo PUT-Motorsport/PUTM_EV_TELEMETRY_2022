@@ -252,7 +252,7 @@ uint8_t NRF24_Transmit (uint8_t *data1)
 	cmdtosend = W_TX_PAYLOAD;
 	HAL_SPI_Transmit(NRF24_SPI, &cmdtosend, 1, 100);
 	// send the payload
-	HAL_SPI_Transmit(NRF24_SPI, data1, 32, 1000);
+	HAL_SPI_Transmit(NRF24_SPI, data1, 28, 1000);
 	// Transmit packet
 	CS_UnSelect();
 

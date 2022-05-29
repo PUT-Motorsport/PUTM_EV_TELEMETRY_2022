@@ -1,4 +1,4 @@
-#include "Data_handling.hpp"
+#include "Data_Handling.hpp"
 #include "Radio_Control.hpp"
 #include "PUTM_EV_CAN_LIBRARY/lib/can_interface.hpp"
 
@@ -7,6 +7,8 @@ extern HeartBeat hb1;
 extern CAN_HandleTypeDef hcan1;
 extern RTC_HandleTypeDef hrtc;
 extern TIM_HandleTypeDef htim6;
+
+using namespace PUTM_CAN;
 
 bool timer_interrupt = true;
 
@@ -29,14 +31,21 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
         HAL_RTC_GetDate(&hrtc, &dt1, RTC_FORMAT_BIN);
         HAL_RTC_GetTime(&hrtc, &time1, RTC_FORMAT_BIN);
 
-        Telemetry_Main global_time{.device_state = Telemetry_states::Power_up};
-        auto Telemetry_main = PUTM_CAN::Can_tx_message<Telemetry_Main>(
-            global_time, can_tx_header_TELEMETRY_MAIN);
+        /*
+
+        PUTM_CAN::Telemetry_Main global_time
+		{
+        	.device_state = PUTM_CAN::Telemetry_states::Power_up
+		};
+        auto Telemetry_Main = PUTM_CAN::Can_tx_message <Telemetry_Main> (global_time, PUTM_CAN::can_tx_header_TELEMETRY_MAIN);
         auto status = Telemetry_main.send(hcan1);
         if (status != HAL_StatusTypeDef::HAL_OK)
         {
             Error_Handler();
         }
+
+        */
+
     }
 
     // DataBuffer1 HeartBeat
@@ -73,7 +82,7 @@ uint8_t* Data_management::Check_Buffer1()
             auto& device = PUTM_CAN::can.device_array[dev];
             if (device->get_new_data() == true)
             {
-                DataBuffer1_flag = DataBuffer1_flag || device->get_position();
+                DataBuffer1_flag = DataBuffer1_flag || device->get_Position();
             }
         }
     }
@@ -153,7 +162,7 @@ uint8_t* Data_management::Check_Buffer2()
             auto& device = PUTM_CAN::can.device_array[dev];
             if (device->get_new_data() == true)
             {
-                DataBuffer2_flag = DataBuffer2_flag || device->get_position();
+                DataBuffer2_flag = DataBuffer2_flag || device->get_Position();
             }
         }
     }
@@ -191,18 +200,7 @@ void Data_management::Clear_msg3()
     memset(DataBuffer3, 0, sizeof(DataBuffer3));
     DataBuffer3_flag = 0;
 }
-void Send_Frame()
-{
-    Apps_main apps_test{
-        .pedal_position = rand() % 2000,
-        .counter = 0,
-        .position_diff = 0,
-        .device_state = Apps_states::Normal_operation,
-    };
-    auto apps_main_frame =
-        PUTM_CAN::Can_tx_message<Apps_main>(apps_test, can_tx_header_APPS_MAIN);
-    auto status = apps_main_frame.send(hcan1);
-}
+
 /*
  *
  *
@@ -265,6 +263,43 @@ void Cycle_frames()
 
         Send_Data(FrameBuffer);
     }
+    if(PUTM_CAN::can.get_aq_acceleration_new_data() == true)
+    {
+    	auto aq_acc = PUTM_CAN::can.get_aq_acceleration();
+
+    	FrameBuffer[0] = (uint8_t)(AQ_ACCELERATION_CAN_ID >> 8);
+    	FrameBuffer[1] = (uint8_t)(AQ_ACCELERATION_CAN_ID);
+
+    	FrameBuffer[2] = (uint8_t)(aq_acc.acc_x >> 8);
+    	FrameBuffer[3] = (uint8_t)(aq_acc.acc_x);
+
+    	FrameBuffer[4] = (uint8_t)(aq_acc.acc_y >> 8);
+    	FrameBuffer[5] = (uint8_t)(aq_acc.acc_y);
+
+    	FrameBuffer[6] = (uint8_t)(aq_acc.acc_z >> 8);
+    	FrameBuffer[7] = (uint8_t)(aq_acc.acc_z);
+
+    	Send_Data(FrameBuffer);
+    }
+    if(PUTM_CAN::can.get_aq_gryoscope_new_data() == true)
+    {
+
+    	auto aq_gyro = PUTM_CAN::can.get_aq_gyroscope();
+
+    	FrameBuffer[0] = (uint8_t)(AQ_GYROSCOPE_CAN_ID >> 8);
+    	FrameBuffer[1] = (uint8_t)(AQ_GYROSCOPE_CAN_ID);
+
+    	FrameBuffer[2] = (uint8_t)(aq_gyro.speed_x >> 8);
+    	FrameBuffer[3] = (uint8_t)(aq_gyro.speed_x);
+
+    	FrameBuffer[4] = (uint8_t)(aq_gyro.speed_y >> 8);
+    	FrameBuffer[5] = (uint8_t)(aq_gyro.speed_y);
+
+    	FrameBuffer[6] = (uint8_t)(aq_gyro.speed_z >> 8);
+    	FrameBuffer[7] = (uint8_t)(aq_gyro.speed_z);
+
+    	Send_Data(FrameBuffer);
+    }
     if (PUTM_CAN::can.get_bms_hv_main_new_data() == true)
     {
         auto bmshv = PUTM_CAN::can.get_bms_hv_main();
@@ -274,10 +309,12 @@ void Cycle_frames()
 
         FrameBuffer[2] = (uint8_t)(bmshv.voltage_sum >> 8);
         FrameBuffer[3] = (uint8_t)(bmshv.voltage_sum);
+
         FrameBuffer[4] = bmshv.soc;
         FrameBuffer[5] = bmshv.temp_max;
         FrameBuffer[6] = bmshv.temp_avg;
         FrameBuffer[7] = bmshv.current;
+
         FrameBuffer[8] = (uint8_t)bmshv.device_state;
 
         Send_Data(FrameBuffer);
@@ -298,18 +335,18 @@ void Cycle_frames()
 
         Send_Data(FrameBuffer);
     }
-    if (PUTM_CAN::can.get_ts_main_new_data() == true)
+    if (PUTM_CAN::can.get_tc_main_new_data() == true)
     {
         auto tc = PUTM_CAN::can.get_tc_main();
 
-        FrameBuffer[0] = (uint8_t)(TS_MAIN_CAN_ID >> 8);
-        FrameBuffer[1] = (uint8_t)(TS_MAIN_CAN_ID);
+        FrameBuffer[0] = (uint8_t)(TC_MAIN_CAN_ID >> 8);
+        FrameBuffer[1] = (uint8_t)(TC_MAIN_CAN_ID);
 
         FrameBuffer[2] = (uint8_t)(tc.vehicle_speed >> 8);
         FrameBuffer[3] = (uint8_t)(tc.vehicle_speed);
         FrameBuffer[4] = tc.motor_current;
-        FrameBuffer[5] = tc.water_pressure;
-        FrameBuffer[6] = tc.water_temp;
+        //FrameBuffer[5] = tc.water_pressure;
+        //FrameBuffer[6] = tc.water_temp;
         FrameBuffer[7] = tc.traction_control_intensivity;
         FrameBuffer[8] = tc.brake_light_active << 5 || tc.regen_active << 4 ||
                          tc.regen_enable << 3 || tc.rtds_active << 2 ||

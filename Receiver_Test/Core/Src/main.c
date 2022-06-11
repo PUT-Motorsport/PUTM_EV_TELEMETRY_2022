@@ -118,6 +118,7 @@ int main(void)
 			if(Frame_by_frame == 0xff)
 			{
 				Parse(RxData);
+
 			}
 			else
 			{
@@ -126,11 +127,14 @@ int main(void)
 					case 65:
 						Message_65(RxData);
 						break;
-					case 68:
-						Message_68(RxData);
-						break;
 					case 66:
 						Message_66(RxData);
+						break;
+					case 67:
+						//Message_67(RxData);
+						break;
+					case 68:
+						Message_68(RxData);
 						break;
 					case 69:
 						Message_69(RxData);
@@ -154,6 +158,16 @@ int main(void)
 		*/
 
 		}
+		/*
+		memset(RxData, 255, 32);
+		RxData[0] = 65;
+		Message_65(RxData);
+		HAL_Delay(250);
+		memset(RxData, 125, 32);
+		RxData[0] = 66;
+		Message_66(RxData);
+		HAL_Delay(250);
+		*/
 	}
 	/* USER CODE END 3 */
 }

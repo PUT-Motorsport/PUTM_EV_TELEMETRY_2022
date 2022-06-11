@@ -149,10 +149,10 @@ int main(void)
     }
     else
     {
-        // HAL_TIM_Base_Start_IT(&htim2);
+        //HAL_TIM_Base_Start_IT(&htim2);
         HAL_TIM_Base_Start_IT(&htim3);
-        HAL_TIM_Base_Start_IT(&htim4);
-        // HAL_TIM_Base_Start_IT(&htim5);
+        //HAL_TIM_Base_Start_IT(&htim4);
+        //HAL_TIM_Base_Start_IT(&htim5);
         hb1 = HeartBeat::DEFAULT;
     }
   /* USER CODE END 2 */
@@ -174,10 +174,17 @@ int main(void)
                 if (Send_Data(handler1.Check_Buffer1()) == true)
                 {
                     HAL_Delay(1);
-                    Send_Data(handler1.return_state1_pointer());
-                    HAL_Delay(1);
-
+                    //Send_Data(handler1.return_state1_pointer());
+                    //HAL_Delay(1);
                     handler1.Clear_msg1();
+                }
+
+                if (Send_Data(handler1.Check_AQBuffer()) == true)
+                {
+                    HAL_Delay(1);
+                    //Send_Data(handler1.return_state2_pointer());
+                    //HAL_Delay(1);
+                    handler1.Clear_msg2();
                 }
                 break;
 
@@ -185,13 +192,13 @@ int main(void)
                 if (Send_Data(handler1.Check_Buffer2()) == true)
                 {
                     HAL_Delay(1);
-                    Send_Data(handler1.return_state2_pointer());
-                    HAL_Delay(1);
+                    //Send_Data(handler1.return_state2_pointer());
+                    //HAL_Delay(1);
                     handler1.Clear_msg2();
                 }
                 break;
             case HeartBeat::Buffer3:
-                Send_Data(handler1.Check_Buffer3());
+                //Send_Data(handler1.Check_BufferAQ());
                 break;
 
             case HeartBeat::DEFAULT:

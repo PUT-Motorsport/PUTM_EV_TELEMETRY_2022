@@ -16,6 +16,7 @@
 #define Dash_tcs_frame 				0x19
 #define TC_main						0x1E
 #define TC_rear_suspension 			0x23
+#define TC_Temps					0x25
 #define Steering_wheel_main	 		0x28
 #define Steering_wheel_event 		0x2D
 #define Dash_fan_speed 				0x32

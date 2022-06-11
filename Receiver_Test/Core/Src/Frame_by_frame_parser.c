@@ -35,12 +35,14 @@ void Parse(uint8_t *RxData)
 
 	switch(ID)
 	{
+	/*
 	case Apps_main:
 		TransmitWithSpace(ID);
 
 		uint16_t APPS_Position = RxData[2] << 8 | RxData[3];
 		TransmitWithNewLine(APPS_Position);
 		break;
+		/*
 	case BMS_LV_main:
 		TransmitWithSpace(ID);
 
@@ -75,6 +77,7 @@ void Parse(uint8_t *RxData)
 		uint16_t AQ_MAIN_brake_pressure_back = RxData[7];
 		TransmitWithNewLine(AQ_MAIN_brake_pressure_back);
 		break;
+
 	case BMS_HV_main:
 		TransmitWithSpace(ID);
 
@@ -96,6 +99,7 @@ void Parse(uint8_t *RxData)
 		uint16_t BMS_HV_device_state = RxData[8];
 		TransmitWithNewLine(BMS_HV_device_state);
 		break;
+		/*
 	case SF_main:
 		TransmitWithSpace(ID);
 
@@ -125,6 +129,16 @@ void Parse(uint8_t *RxData)
 
 		uint16_t TC_brake_light_active = RxData[8];
 		TransmitWithNewLine(TC_brake_light_active);
+		break;
+		*/
+	case TC_Temps:
+		TransmitWithSpace(ID);
+		for(int i = 2; i <= 7; i++)
+		{
+			TransmitWithSpace(RxData[i]);
+		}
+		TransmitWithNewLine(0);
+		HAL_Delay(1000);
 		break;
 	}
 

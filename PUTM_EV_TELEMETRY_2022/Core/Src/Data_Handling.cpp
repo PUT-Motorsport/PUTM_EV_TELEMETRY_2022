@@ -66,6 +66,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
 uint8_t* Data_management::Check_Buffer1()
 {
     // Timer to avoid endless loops
+	/*
     Adjust_Waiting_time(10);
 
     while ((DataBuffer1_flag != Buffer1_full) && (timer_interrupt == false))
@@ -80,7 +81,7 @@ uint8_t* Data_management::Check_Buffer1()
             }
         }
     }
-
+	*/
     // Get data
     auto apps = PUTM_CAN::can.get_apps_main();
     auto bmslv = PUTM_CAN::can.get_bms_lv_main();
@@ -138,6 +139,7 @@ uint8_t* Data_management::Check_Buffer1()
 }
 uint8_t* Data_management::Check_AQBuffer()
 {
+	/*
     Adjust_Waiting_time(10);
 
     while ((DataBuffer1_flag != Buffer1_full) && (timer_interrupt == false))
@@ -152,11 +154,13 @@ uint8_t* Data_management::Check_AQBuffer()
             }
         }
     }
-
+	*/
     auto aq = PUTM_CAN::can.get_aq_main();
     auto aq_gyro = PUTM_CAN::can.get_aq_gyroscope();
     auto aq_acc = PUTM_CAN::can.get_aq_acceleration();
 
+
+    DataBufferAQ[0] = 'B';
     DataBufferAQ[1] = (uint8_t)(aq.adc_susp_right >> 8);
     DataBufferAQ[2] = (uint8_t)aq.adc_susp_right;
     DataBufferAQ[3] = (uint8_t)(aq.adc_susp_left >> 8);
@@ -171,18 +175,20 @@ uint8_t* Data_management::Check_AQBuffer()
     DataBufferAQ[11] = (uint8_t)(aq_gyro.speed_z >> 8);
     DataBufferAQ[12] = (uint8_t)(aq_gyro.speed_z);
 
+    DataBufferAQ[13] = (uint8_t)(aq_acc.acc_x >> 8);
     DataBufferAQ[14] = (uint8_t)(aq_acc.acc_x);
     DataBufferAQ[15] = (uint8_t)(aq_acc.acc_y >> 8);
     DataBufferAQ[16] = (uint8_t)(aq_acc.acc_y);
     DataBufferAQ[17] = (uint8_t)(aq_acc.acc_z >> 8);
     DataBufferAQ[18] = (uint8_t)(aq_acc.acc_z);
 
-    // DataBufferAQ[19] = aq.state;
+    //DataBufferAQ[19] = aq.state;
 
     return DataBufferAQ;
 }
 uint8_t* Data_management::Check_Buffer2()
 {
+	/*
     Adjust_Waiting_time(500);
     while ((DataBuffer1_flag != Buffer1_full) && (timer_interrupt == false))
     {
@@ -196,7 +202,7 @@ uint8_t* Data_management::Check_Buffer2()
         }
     }
     // Get data
-
+	*/
     auto tc_main = PUTM_CAN::can.get_tc_main();
     auto tc_sus = PUTM_CAN::can.get_tc_rear();
     auto tc_wheels = PUTM_CAN::can.get_tc_wheel_velocities();
@@ -204,8 +210,7 @@ uint8_t* Data_management::Check_Buffer2()
     auto tc_imu_gyro = PUTM_CAN::can.get_tc_imu_gyro();
 
     // move data to buffer.
-
-    DataBuffer2[0] = 'B';
+    DataBuffer2[0] = 'C';
     DataBuffer2[1] = (uint8_t)(tc_main.vehicle_speed >> 8);
     DataBuffer2[2] = (uint8_t)(tc_main.vehicle_speed);
     DataBuffer2[3] = tc_main.motor_current;
@@ -304,6 +309,8 @@ uint8_t* Data_management::Check_BufferTtemps()
         }
     }
 
+    auto tc_temps = PUTM_CAN::can.get_tc_temperatures();
+
     DataBuffer2[1] = tc_temps.engine;
     DataBuffer2[2] = tc_temps.inverter;
     DataBuffer2[3] = tc_temps.water_pressure_in;
@@ -311,9 +318,7 @@ uint8_t* Data_management::Check_BufferTtemps()
     DataBuffer2[5] = tc_temps.water_temp_in;
     DataBuffer2[6] = tc_temps.water_temp_out;
 
-    DataBuffer
 
-        return Buffer_temps;
 }
 void Data_management::Clear_msg1()
 {
@@ -327,8 +332,8 @@ void Data_management::Clear_msg2()
 }
 void Data_management::Clear_msg3()
 {
-    memset(Buffer3_SFy, 0, sizeof(Buffer3_SFy));
-    DataBuffer3_flag = 0;
+   // memset(Buffer3_SFy, 0, sizeof(Buffer3_SFy));
+    //DataBuffer3_flag = 0;
 }
 
 /*
@@ -484,5 +489,33 @@ void Cycle_frames()
                          tc.tractive_system_on;
 
         Send_Data(FrameBuffer);
+    }
+    if(PUTM_CAN::can.get_laptimer_pass_new_data() == true)
+    {
+    	auto laptimer = PUTM_CAN::can.get_laptimer_pass();
+
+
+
+
+
+    }
+    if(PUTM_CAN::can.get_tc_temperatures_new_data() == true)
+    {
+    	auto tc_temps = PUTM_CAN::can.get_tc_temperatures();
+
+    	  FrameBuffer[0] = (uint8_t)(TC_TEMPERATURES_CAN_ID >> 8);
+    	  FrameBuffer[1] = (uint8_t)(TC_TEMPERATURES_CAN_ID);
+
+    	  FrameBuffer[2] = (uint8_t)(tc_temps.engine);
+    	  FrameBuffer[3] = (uint8_t)(tc_temps.inverter);
+
+    	  FrameBuffer[4] = (uint8_t)(tc_temps.water_pressure_in);
+    	  FrameBuffer[5] = (uint8_t)(tc_temps.water_pressure_out);
+
+    	  FrameBuffer[6] = (uint8_t)(tc_temps.water_temp_in);
+    	  FrameBuffer[7] = (uint8_t)(tc_temps.water_temp_out);
+
+    	  Send_Data(FrameBuffer);
+
     }
 }

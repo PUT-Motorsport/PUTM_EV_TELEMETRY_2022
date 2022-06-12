@@ -487,17 +487,12 @@ void Cycle_frames()
                          tc.regen_enable << 3 || tc.rtds_active << 2 ||
                          tc.traction_control_enable << 1 ||
                          tc.tractive_system_on;
-
+        FrameBuffer[9] = (uint8_t)(tc.device_state);
         Send_Data(FrameBuffer);
     }
     if(PUTM_CAN::can.get_laptimer_pass_new_data() == true)
     {
     	auto laptimer = PUTM_CAN::can.get_laptimer_pass();
-
-
-
-
-
     }
     if(PUTM_CAN::can.get_tc_temperatures_new_data() == true)
     {

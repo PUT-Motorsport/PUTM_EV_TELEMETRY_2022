@@ -128,7 +128,11 @@ void Parse(uint8_t *RxData)
 		TransmitWithSpace(TC_traction_control_intensivity);
 
 		uint16_t TC_brake_light_active = RxData[8];
-		TransmitWithNewLine(TC_brake_light_active);
+		TransmitWithSpace(TC_brake_light_active);
+
+		uint8_t TC_State = RxData[9];
+		TransmitWithNewLine(TC_State);
+
 		break;
 		*/
 	case TC_Temps:

@@ -131,7 +131,7 @@ int main(void)
 						Message_66(RxData);
 						break;
 					case 67:
-						//Message_67(RxData);
+						Message_67(RxData);
 						break;
 					case 68:
 						Message_68(RxData);

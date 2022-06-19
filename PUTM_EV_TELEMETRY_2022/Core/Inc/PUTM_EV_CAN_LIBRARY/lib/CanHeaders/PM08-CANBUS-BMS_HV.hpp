@@ -1,4 +1,4 @@
-//Generated on Sat Apr 30 12:45:15 2022
+//Generated on Wed Jun 15 10:27:26 2022
 #ifndef BMS_HV
 #define BMS_HV
 
@@ -20,13 +20,12 @@ enum struct BMS_HV_states: uint8_t {
 };
 
 struct __attribute__ ((packed)) BMS_HV_main{
-	int16_t voltage_sum; 
+	uint16_t voltage_sum; 
 	int16_t current; 
-	uint8_t soc; // state of charge
+	uint16_t soc : 10; // state of charge
 	uint8_t temp_max; 
 	uint8_t temp_avg; // in Celsius
-
-	BMS_HV_states device_state; // 
+	BMS_HV_states device_state : 6; // 
 };
 
 

@@ -1,4 +1,4 @@
-//Generated on Sat Apr 30 12:45:20 2022
+//Generated on Wed Jun 15 10:27:23 2022
 #ifndef SF
 #define SF
 
@@ -62,6 +62,14 @@ struct __attribute__ ((packed)) SF_NUCS{
 	FuseData fuse_2_intel_nuc; // state + mA read
 };
 
+struct __attribute__ ((packed)) SF_safety{
+	bool  firewall; 
+	bool  hvd; 
+	bool  inverter; 
+	bool  dv; 
+	bool  tsms; // 
+};
+
 
 const uint16_t SF_MAIN_CAN_ID = 0x41;
 const uint8_t SF_MAIN_CAN_DLC = sizeof(SF_main);
@@ -81,6 +89,9 @@ const uint8_t SF_WS_FREQUENCY = 10;
 const uint16_t SF_NUCS_CAN_ID = 0x5a;
 const uint8_t SF_NUCS_CAN_DLC = sizeof(SF_NUCS);
 const uint8_t SF_NUCS_FREQUENCY = 10;
+const uint16_t SF_SAFETY_CAN_ID = 0x3d;
+const uint8_t SF_SAFETY_CAN_DLC = sizeof(SF_safety);
+const uint8_t SF_SAFETY_FREQUENCY = 1;
 
 const CAN_TxHeaderTypeDef can_tx_header_SF_MAIN{
 SF_MAIN_CAN_ID, 0xFFF, CAN_ID_STD, CAN_RTR_DATA, SF_MAIN_CAN_DLC, DISABLE};
@@ -99,6 +110,9 @@ SF_WS_CAN_ID, 0xFFF, CAN_ID_STD, CAN_RTR_DATA, SF_WS_CAN_DLC, DISABLE};
 
 const CAN_TxHeaderTypeDef can_tx_header_SF_NUCS{
 SF_NUCS_CAN_ID, 0xFFF, CAN_ID_STD, CAN_RTR_DATA, SF_NUCS_CAN_DLC, DISABLE};
+
+const CAN_TxHeaderTypeDef can_tx_header_SF_SAFETY{
+SF_SAFETY_CAN_ID, 0xFFF, CAN_ID_STD, CAN_RTR_DATA, SF_SAFETY_CAN_DLC, DISABLE};
 
 } // namespace can
 

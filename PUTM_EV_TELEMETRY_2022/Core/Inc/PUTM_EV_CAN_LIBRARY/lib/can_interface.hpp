@@ -32,46 +32,49 @@ namespace PUTM_CAN {
 
 class Can_interface {
 
-  Device<Apps_main> apps{APPS_MAIN_CAN_ID, 1};
-  Device<AQ_main> aq_main{AQ_MAIN_CAN_ID,2};
-  Device<AQ_acceleration> aq_acceleration{AQ_ACCELERATION_CAN_ID,3};
-  Device<AQ_gyroscope> aq_gyroscope{AQ_GYROSCOPE_CAN_ID,4};
-  Device<BMS_HV_main> bms_hv_main{BMS_HV_MAIN_CAN_ID,5};
-  Device<BMS_LV_main> bms_lv_main{BMS_LV_MAIN_CAN_ID,6};
-  Device<BMS_LV_temperature> bms_lv_temperature{BMS_LV_TEMPERATURE_CAN_ID,7};
-  Device<Dash_Main> dash_main{DASH_MAIN_CAN_ID,8};
-  Device<Dash_TCS> dash_TCS{DASH_TCS_CAN_ID,9};
+  Device<Apps_main> apps{APPS_MAIN_CAN_ID};
+  Device<AQ_main> aq_main{AQ_MAIN_CAN_ID};
+  Device<AQ_acceleration> aq_acceleration{AQ_ACCELERATION_CAN_ID};
+  Device<AQ_gyroscope> aq_gyroscope{AQ_GYROSCOPE_CAN_ID};
+  Device<AQ_ts_button> aq_ts_button{AQ_TS_BUTTON_CAN_ID};
+  Device<BMS_HV_main> bms_hv_main{BMS_HV_MAIN_CAN_ID};
+  Device<BMS_LV_main> bms_lv_main{BMS_LV_MAIN_CAN_ID};
+  Device<BMS_LV_temperature> bms_lv_temperature{BMS_LV_TEMPERATURE_CAN_ID};
+  Device<Dash_Main> dash_main{DASH_MAIN_CAN_ID};
+  Device<Dash_TCS> dash_TCS{DASH_TCS_CAN_ID};
   Device<Dash_Smart_Fuses_FAN_speed> dash_fan_speed{
-      DASH_SMART_FUSES_FAN_SPEED_CAN_ID,10};
-  Device<Dash_steering_wheel_request> dash_steering_request{DASH_STEERING_WHEEL_REQUEST_CAN_ID,11};
-  Device<Dash_lap_finished> dash_lap_finished{DASH_LAP_FINISHED_CAN_ID,12};
-  Device<Lap_timer_Main> laptimer_main{LAP_TIMER_MAIN_CAN_ID,13};
-  Device<Lap_timer_Pass> laptimer_pass{LAP_TIMER_PASS_CAN_ID,18};
-  Device<SF_main> sf_main{SF_MAIN_CAN_ID,19};
-  Device<SF_FrontBox> sf_frontbox{SF_FRONTBOX_CAN_ID,20};
+      DASH_SMART_FUSES_FAN_SPEED_CAN_ID};
+  Device<Dash_steering_wheel_request> dash_steering_request{DASH_STEERING_WHEEL_REQUEST_CAN_ID};
+  Device<Dash_lap_finished> dash_lap_finished{DASH_LAP_FINISHED_CAN_ID};
+  Device<Lap_timer_Main> laptimer_main{LAP_TIMER_MAIN_CAN_ID};
+  Device<Lap_timer_Pass> laptimer_pass{LAP_TIMER_PASS_CAN_ID};
+  Device<SF_safety> sf_safety{SF_SAFETY_CAN_ID};
+  Device<SF_main> sf_main{SF_MAIN_CAN_ID};
+  Device<SF_FrontBox> sf_frontbox{SF_FRONTBOX_CAN_ID};
   Device<SF_CoolingAndVSafety> sf_coolingandvsafety{
-      SF_COOLINGANDVSAFETY_CAN_ID,21};
-  Device<SF_DV> sf_dv{SF_DV_CAN_ID,22};
-  Device<SF_WS> sf_ws{SF_WS_CAN_ID,23};
-  Device<SF_NUCS> sf_nucs{SF_NUCS_CAN_ID,24};
-  Device<Steering_Wheel_main> steering_wheel_main{STEERING_WHEEL_MAIN_CAN_ID,25};
+      SF_COOLINGANDVSAFETY_CAN_ID};
+  Device<SF_DV> sf_dv{SF_DV_CAN_ID};
+  Device<SF_WS> sf_ws{SF_WS_CAN_ID};
+  Device<SF_NUCS> sf_nucs{SF_NUCS_CAN_ID};
+  Device<Steering_Wheel_main> steering_wheel_main{STEERING_WHEEL_MAIN_CAN_ID};
   Device<Steering_Wheel_event> steering_wheel_event{
-      STEERING_WHEEL_EVENT_CAN_ID,26};
-  Device<TC_main> tc_main{TC_MAIN_CAN_ID,27};
-  Device<TC_rear_suspension> tc_rear_suspension{TC_REAR_SUSPENSION_CAN_ID,28};
-  Device<TC_wheel_velocities> tc_wheel_velocities{TC_WHEEL_VELOCITIES_CAN_ID,29};
-  Device<TC_temperatures> tc_temperatures{TC_TEMPERATURES_CAN_ID,30};
-  Device<TC_imu_acc> tc_imu_acc{TC_IMU_ACC_CAN_ID,31};
-  Device<TC_imu_gyro> tc_imu_gyro{TC_IMU_GYRO_CAN_ID,32};
-  Device<Telemetry_Main> telemetry_main{TELEMETRY_MAIN_CAN_ID,33};
-  Device<WheelTemp_main> wheel_temp_main{WHEELTEMP_MAIN_CAN_ID,34};
-  Device<YawProbe_air_flow> yawprobe_air_flow{YAWPROBE_AIR_FLOW_CAN_ID,35};
+      STEERING_WHEEL_EVENT_CAN_ID};
+  Device<TC_main> tc_main{TC_MAIN_CAN_ID};
+  Device<TC_rear_suspension> tc_rear_suspension{TC_REAR_SUSPENSION_CAN_ID};
+  Device<TC_wheel_velocities> tc_wheel_velocities{TC_WHEEL_VELOCITIES_CAN_ID};
+  Device<TC_temperatures> tc_temperatures{TC_TEMPERATURES_CAN_ID}; 
+  Device<TC_imu_acc> tc_imu_acc{TC_IMU_ACC_CAN_ID};
+  Device<TC_imu_gyro> tc_imu_gyro{TC_IMU_GYRO_CAN_ID};
+  Device<Telemetry_Main> telemetry_main{TELEMETRY_MAIN_CAN_ID};
+  Device<WheelTemp_main> wheel_temp_main{WHEELTEMP_MAIN_CAN_ID};
+  Device<YawProbe_air_flow> yawprobe_air_flow{YAWPROBE_AIR_FLOW_CAN_ID};
 
-public:
-  std::array<Device_base *, 31> device_array = {&apps,
-		  	  	  	  	  	  	  	  	  	  	&aq_gyroscope,
+
+  std::array<Device_base *, 33> device_array = {&apps,
                                                 &aq_main,
+                                                &aq_gyroscope,
                                                 &aq_acceleration,
+                                                &aq_ts_button,
                                                 &bms_hv_main,
                                                 &bms_lv_main,
                                                 &bms_lv_temperature,
@@ -82,6 +85,7 @@ public:
                                                 &dash_lap_finished,
                                                 &laptimer_main,
                                                 &laptimer_pass,
+                                                &sf_safety,
                                                 &sf_main,
                                                 &sf_frontbox,
                                                 &sf_coolingandvsafety,
@@ -100,6 +104,7 @@ public:
                                                 &yawprobe_air_flow,
                                                 &wheel_temp_main};
 
+public:
   Can_interface() = default;
 
   bool parse_message(const Can_rx_message &m) {
@@ -116,6 +121,7 @@ public:
   AQ_main get_aq_main() { return aq_main.data; }
   AQ_acceleration get_aq_acceleration() { return aq_acceleration.data; }
   AQ_gyroscope get_aq_gyroscope() { return aq_gyroscope.data; }
+  AQ_ts_button get_aq_ts_button() { return aq_ts_button.data; }
   BMS_HV_main get_bms_hv_main() { return bms_hv_main.data; }
   BMS_LV_main get_bms_lv_main() { return bms_lv_main.data; }
   BMS_LV_temperature get_bms_lv_temperature() {
@@ -132,8 +138,9 @@ public:
   Dash_lap_finished get_dash_lap_finished() {
     return dash_lap_finished.data;
   }
-  Lap_timer_Main get_laptimer_main() { return laptimer_main.data; };
+  Lap_timer_Main get_laptimer_main() { return laptimer_main.data; }
   Lap_timer_Pass get_laptimer_pass() { return laptimer_pass.data; }
+  SF_safety get_sf_safety() {return sf_safety.data;}
   SF_main get_sf_main() { return sf_main.data; }
   SF_FrontBox get_sf_frontbox() { return sf_frontbox.data; }
   SF_CoolingAndVSafety get_sf_cooling() { return sf_coolingandvsafety.data; }
@@ -158,6 +165,7 @@ public:
   bool get_aq_main_new_data() { return aq_main.get_new_data(); }
   bool get_aq_acceleration_new_data() { return aq_acceleration.get_new_data();}
   bool get_aq_gryoscope_new_data() { return aq_gyroscope.get_new_data(); }
+  bool get_aq_ts_button_new_data() { return aq_ts_button.get_new_data(); }
   bool get_bms_hv_main_new_data() { return bms_hv_main.get_new_data(); }
   bool get_bms_lv_main_new_data() { return bms_lv_main.get_new_data(); }
   bool get_bms_lv_temperature_new_data() {
@@ -175,6 +183,7 @@ public:
   bool get_laptimer_main_new_data() { return laptimer_main.get_new_data(); }
   bool get_laptimer_pass_new_data() { return laptimer_pass.get_new_data(); }
   bool get_sf_main_new_data() { return sf_main.get_new_data(); }
+  bool get_sf_safety_new_data() { return sf_safety.get_new_data(); }
   bool get_sf_frontbox_new_data() { return sf_frontbox.get_new_data(); }
   bool get_sf_cooling_new_data() { return sf_coolingandvsafety.get_new_data(); }
   bool get_sf_dv_new_data() { return sf_dv.get_new_data(); }
@@ -207,7 +216,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
   if (rx.status == HAL_StatusTypeDef::HAL_OK) {
     if (not PUTM_CAN::can.parse_message(rx)) {
       // Unknown message
-      Error_Handler();
+      //Error_Handler();
     }
   }
 }

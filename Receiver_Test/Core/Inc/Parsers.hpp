@@ -16,9 +16,10 @@ bool Message_66(uint8_t RxData[]);
 void Message_67(uint8_t RxData[]);
 void Message_68(uint8_t RxData[]);
 bool Message_70(uint8_t RxData[]);
-void Lap_time_handler(uint8_t RxData);
+void Message_71(uint8_t RxData[]);
 
-struct msg65{
+struct msg65
+{
 	uint8_t msgid;
 	uint16_t Pedal_Position;
 	int Pedal_diff;
@@ -71,7 +72,6 @@ enum struct Safety_Front{
 	BSPD
 };
 void Parse(uint8_t *RxData);
-void Update_Terminal();
 void Update_Terminal2();
 void Update_Terminal_No_Safety_front();
 void Update_Terminal_No_Safety_rear();

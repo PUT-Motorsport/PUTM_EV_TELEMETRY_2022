@@ -2,24 +2,140 @@
  * Printer.cpp
  *
  *  Created on: Jul 25, 2022
- *      Author: wasyl
+ *      Author: Adam Wasilewski
  */
 
 #include "Printer.hpp"
+#include "Parsers.hpp"
+
+extern UART_HandleTypeDef hlpuart1;
+
+extern msg65 ms65;
+extern msg66 ms66;
+extern msg67 ms67;
+extern msg68 ms68;
+extern msg70 ms70;
 
 void Select_Screen(uint8_t screen)
 {
 	switch(screen)
 	{
 	case 0:
-
+		Print_Data();
 		break;
 	case 1:
-
+		Print_States();
 		break;
 	case 2:
-
+		//FIXME: Handle time printing from here rather then directly form timer interrupt;
+		//Print_time();
 		break;
 	}
+}
+void Print_Data()
+{
+	 nauto out = fmt::memory_buffer();
+	format_to(std::back_inserter(out),"APPS:{} LVV:{} LV SoC{} HVV:{} HV SoC:{} HV T:{} HV Curr:{} BP Front:{} Speed:{} Motor curr:{} Engine V:{} Inverter T:{}\n\r",
+	   ms65.Pedal_Position,ms65.LV_Voltage,ms65.LV_Soc,ms65.HV_Voltage, ms65.HV_SoC, ms65.HV_Temps, ms65.HV_Current,ms66.brake_pressure_front,ms67.vehicle_speed,ms67.motor_current, ms67.engine_speed, ms68.inverter_temp);
+
+	auto data = out.data(); // pointer to the formatted data
+	auto size = out.size(); // size of the formatted data
+
+	HAL_UART_Transmit(&hlpuart1, (uint8_t*)(data), size, 1000);
+
+	HAL_Delay(10);
+}
+void Print_time(Time lap_time, Time Best, Time Last)
+{
+
+
+
+}
+void Print_States()
+{
+
+}
+void Print_No_Safety_front()
+{
+	auto out = fmt::memory_buffer();
+	format_to(std::back_inserter(out), "Missing safety front: ");
+
+	Safety_Front sffront;
+
+	uint8_t mask = 0x01;
+
+	for(int i = 0; i<8; i++)
+	{
+		if(ms66.Safety_front & mask == 0)
+		{
+			sffront = Safety_Front(i);
+			format_to(std::back_inserter(out), "{}" , char(sffront));
+		}
+		else
+		{
+
+		}
+	mask = mask << 1;
+	}
+
+	format_to(std::back_inserter(out), "\n\r");
+
+	auto data = out.data(); // pointer to the formatted data
+	auto size = out.size(); // size of the formatted data
+
+	HAL_UART_Transmit(&hlpuart1, (uint8_t*)(data), size, 1000);
+}
+
+void Print_No_Safety_rear()
+{
+
+	auto out = fmt::memory_buffer();
+	format_to(std::back_inserter(out), "Missing safety rear: ");
+
+	Safety_Rear sfrear;
+
+	uint8_t mask = 0x01;
+
+	for(int i = 0; i<8; i++)
+	{
+		if(ms70.Safety_rear & mask == 0)
+		{
+			sfrear = Safety_Rear(i);
+			format_to(std::back_inserter(out), "{}" , char(sfrear));
+		}
+		else
+		{
+
+		}
+	mask = mask << 1;
+	}
+
+	format_to(std::back_inserter(out), "\n\r");
+
+	auto data = out.data(); // pointer to the formatted data
+	auto size = out.size(); // size of the formatted data
+
+	HAL_UART_Transmit(&hlpuart1, (uint8_t*)(data), size, 1000);
+
+}
+void Print_Data_to_application()//With twitching
+{
+	uint8_t clear[] = "\033[2J";
+
+	auto out1 = fmt::memory_buffer();
+
+	format_to(std::back_inserter(out1), "---------------------------------------------------------\n\r");
+	format_to(std::back_inserter(out1), "Pedal Position: {} difference: {}\n\r", ms65.Pedal_Position, ms65.Pedal_diff);
+	format_to(std::back_inserter(out1), "HV Voltage: {} HV SoC: {} HV Temp max: {} HV Temps: {} HV Current: {}\n\r", ms65.HV_Voltage, ms65.HV_SoC, ms65.HV_Temp_max, ms65.HV_Temps, ms65.HV_Current);
+	format_to(std::back_inserter(out1), "Brake pressure front: {} Brake pressure rear: {}\n\r", ms66.brake_pressure_front, ms66.brake_pressure_rear);
+	format_to(std::back_inserter(out1), "Vehicle speed: {} Motor current: {} Engine speed: {} Wheel_lf: {} Wheel_rf: {} Wheel_lr: {} Wheel_rr: {}\n\r", ms67.vehicle_speed, ms67.engine_speed, ms67.motor_current, ms67.wheel_left_front, ms67.wheel_right_front, ms67.wheel_left_rear, ms67.wheel_right_rear);
+
+	auto data = out1.data(); // pointer to the formatted data
+	auto size = out1.size(); // size of the formatted data
+	HAL_UART_Transmit(&hlpuart1, (uint8_t*)(data), size, 1000);
+
+	HAL_Delay(100);
+
+	HAL_UART_Transmit(&hlpuart1, clear, sizeof(clear), 1000);
 }
 

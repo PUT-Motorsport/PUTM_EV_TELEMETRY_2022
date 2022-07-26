@@ -29,6 +29,7 @@ private:
     uint8_t DataBuffer2[32] = {0};
     uint8_t DataBufferSFy[32] = {0};
     uint8_t DataBufferTemps[32] = {0};
+    uint8_t DataBufferLapTimer[2] = {0};
 
     uint8_t StateBuffer1[10] = {0};
     uint8_t StateBuffer2[10] = {0};
@@ -78,6 +79,7 @@ public:
     uint8_t* Check_Buffer2();
     uint8_t* Check_BufferSFy();
     uint8_t* Check_BufferTtemps();
+    uint8_t* Laptimer_indicator();
 
     uint8_t* return_state1_pointer() { return StateBuffer1; }
     uint8_t* return_state2_pointer() { return StateBuffer2; }

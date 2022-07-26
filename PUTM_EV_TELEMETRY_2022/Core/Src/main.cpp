@@ -219,19 +219,10 @@ int main(void)
 
             case HeartBeat::DEFAULT:
                 // TEST:
-            	/*
             	if(Check_Laptimer() == true)
             	{
-            		uint8_t laptime_array[4];
-            		time send_time = return_lap_time();
-            		laptime_array[0] = 99;
-            		laptime_array[1] = send_time.minute;
-            		laptime_array[2] = send_time.seconds;
-            		laptime_array[3] = uint8_t(send_time.miliseconds >> 8);
-            		laptime_array[4] = uint8_t(send_time.miliseconds);
-            		Send_Data(laptime_array);
+            		Send_Data(handler1.Laptimer_indicator());
             	}
-            	*/
                 break;
 
             case HeartBeat::FRAME_BY_FRAME:

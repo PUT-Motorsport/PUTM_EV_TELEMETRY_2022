@@ -6,15 +6,43 @@
  */
 
 #include "Lap_time_handling.hpp"
+#include "Printer.hpp"
+#include "main.h"
 
-static Time best;
-static Time last;
+extern TIM_HandleTypeDef htim2;
+extern uint8_t Cycle_screens;
 
-void Handle_new_time(uint8_t RxData[])
+Time lap_time;
+Time Best;
+Time Last;
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
 {
-	uint8_t minutes = RxData[1];
-	uint8_t seconds = RxData[2];
-	uint16_t miliseconds = RxData[3] << 8 | RxData[4];
-	last.Override_last(minutes, seconds, miliseconds);
-	last.Check_best(best, last);
+	if(htim->Instance == TIM2)
+	{
+		lap_time.Update_Time();
+		if(Cycle_screens == 2)
+		{
+			Print_time(lap_time, Best, Last);
+		}
+	}
+}
+void Time::Update_Time()
+{
+	lap_time.miliseconds++;
+	if(lap_time.miliseconds == 1000)
+	{
+		lap_time.seconds++;
+		lap_time.miliseconds = 0;
+	}
+	if(lap_time.seconds == 60)
+	{
+		lap_time.minute++;
+		lap_time.seconds = 0;
+	}
+}
+void End_Lap()
+{
+	lap_time.Check_best(Best, Last);
+	Last = lap_time;
 }

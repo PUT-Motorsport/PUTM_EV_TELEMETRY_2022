@@ -26,18 +26,19 @@ class Time{
 			seconds = 0;
 			miliseconds = 0;
 		}
-		void Check_best(Time best, Time last)
+		void Update_Time();
+		void Check_best(Time Best, Time Last)
 		{
 
 
 		}
-		void Override_last(uint8_t minutes, uint8_t seconds, uint16_t miliseconds)
+		void Override_last(Time lap_time, Time Last)
 		{
 
 
 		}
 
 };
-void Handle_new_time(uint8_t RxData[]);
+void End_Lap();
 
 #endif /* INC_LAP_TIME_HANDLING_HPP_ */

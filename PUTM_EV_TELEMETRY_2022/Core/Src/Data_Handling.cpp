@@ -60,7 +60,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
     }
     if(htim->Instance == TIM7)
     {
-    	Update_Time();
+
     }
     //handler1.Pass_States(uint8_t(PUTM_CAN::Telemetry_states::Gathering_Data));
 }
@@ -357,6 +357,12 @@ uint8_t* Data_management::Check_BufferTtemps()
 
     return DataBuffer2;
 }
+uint8_t* Data_management::Laptimer_indicator()
+{
+	DataBufferLapTimer[0] = 71;
+	DataBufferLapTimer[1] = 0xff;
+	return DataBufferLapTimer;
+}
 void Data_management::Clear_msg1()
 {
     memset(DataBuffer1, 0, sizeof(DataBuffer1));
@@ -593,39 +599,12 @@ void Data_management::Pass_States(uint8_t state)
 }
 bool Check_Laptimer()
 {
-	if((PUTM_CAN::can.get_laptimer_pass_new_data() == true) & (Lap_is_measured == false))
+	if(PUTM_CAN::can.get_laptimer_pass_new_data() == true)
 	{
-		Lap_is_measured = true;
-		HAL_TIM_Base_Start_IT(&htim7);
-		return false;
-	}
-	else if((PUTM_CAN::can.get_laptimer_pass_new_data() == true) & (Lap_is_measured == true))
-	{
-		Lap_is_measured = false;
 		return true;
 	}
-}
-void Update_Time()
-{
-			lap_time.miliseconds++;
-			if(lap_time.miliseconds == 1000)
-			{
-				lap_time.seconds++;
-				lap_time.miliseconds = 0;
-			}
-			if(lap_time.seconds == 60)
-			{
-					lap_time.minute++;
-					lap_time.seconds = 0;
-			}
-}
-void reset_time()
-{
-	lap_time.minute = 0;
-	lap_time.seconds = 0;
-	lap_time.miliseconds = 0;
-}
-time return_lap_time()
-{
-	return lap_time;
+	else
+	{
+		return false;
+	}
 }

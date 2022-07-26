@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
@@ -43,7 +44,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
- UART_HandleTypeDef hlpuart1;
+UART_HandleTypeDef hlpuart1;
 
 SPI_HandleTypeDef hspi1;
 
@@ -59,6 +60,12 @@ uint8_t Cycle_screens = 0;
 bool missing_safety_front = false;
 bool missing_safety_rear = false;
 bool Print_to_Terminal = true;
+
+msg65 ms65;
+msg66 ms66;
+msg67 ms67;
+msg68 ms68;
+msg70 ms70;
 
 /* USER CODE END PV */
 
@@ -109,10 +116,9 @@ int main(void)
   MX_LPUART1_UART_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-	NRF24_Init();
-	NRF24_RxMode(RxAddress, 10);
-
-	//HAL_TIM_Base_Start_IT(&htim2);
+  NRF24_Init();
+  NRF24_RxMode(RxAddress, 10);
+  //HAL_TIM_Base_Start_IT(&htim2);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -154,8 +160,8 @@ int main(void)
 					case 70:
 						missing_safety_rear = Message_70(RxData);
 						break;
-					case 99:
-						Handle_new_time(RxData);
+					case 71:
+						Message_71(RxData);
 						break;
 					default:
 
@@ -163,18 +169,10 @@ int main(void)
 				}
 			}
 		}
-		if(missing_safety_front == true)
-		{
-			Update_Terminal_No_Safety_front();
-		}
-		else if(missing_safety_rear == true)
-		{
-			Update_Terminal_No_Safety_rear();
-		}
 		else
 		{
-			Update_Terminal2();
-			//Select_Screen(Cycle_screens);
+			//Update_Terminal2();
+			Select_Screen(Cycle_screens);
 		}
 	}
   /* USER CODE END 3 */
@@ -332,9 +330,9 @@ static void MX_TIM2_Init(void)
 
   /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 17000;
+  htim2.Init.Prescaler = 170-1;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 10000;
+  htim2.Init.Period = 100000;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)

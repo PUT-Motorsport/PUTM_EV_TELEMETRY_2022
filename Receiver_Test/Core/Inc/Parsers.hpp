@@ -2,7 +2,7 @@
  * Parsers.h
  *
  *  Created on: 11 May 2022
- *      Author: wasyl
+ *      Author: Adam Wasilewski
  */
 #include "main.h"
 
@@ -72,8 +72,5 @@ enum struct Safety_Front{
 	BSPD
 };
 void Parse(uint8_t *RxData);
-void Update_Terminal2();
-void Update_Terminal_No_Safety_front();
-void Update_Terminal_No_Safety_rear();
 
 #endif /* INC_PARSERS_H_ */

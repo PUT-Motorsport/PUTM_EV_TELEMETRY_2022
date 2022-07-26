@@ -34,7 +34,7 @@ void Select_Screen(uint8_t screen)
 }
 void Print_Data()
 {
-	 nauto out = fmt::memory_buffer();
+	auto out = fmt::memory_buffer();
 	format_to(std::back_inserter(out),"APPS:{} LVV:{} LV SoC{} HVV:{} HV SoC:{} HV T:{} HV Curr:{} BP Front:{} Speed:{} Motor curr:{} Engine V:{} Inverter T:{}\n\r",
 	   ms65.Pedal_Position,ms65.LV_Voltage,ms65.LV_Soc,ms65.HV_Voltage, ms65.HV_SoC, ms65.HV_Temps, ms65.HV_Current,ms66.brake_pressure_front,ms67.vehicle_speed,ms67.motor_current, ms67.engine_speed, ms68.inverter_temp);
 
@@ -45,14 +45,18 @@ void Print_Data()
 
 	HAL_Delay(10);
 }
-void Print_time(Time lap_time, Time Best, Time Last)
+void Print_time(Time lap_time, Time Best, Time Last, uint8_t Laps_tracker)
 {
-
-
-
+	auto time_screen = fmt::memory_buffer();
+	format_to(std::back_inserter(time_screen), "Lap Time:{}:{}:{} Last Lap:{} Best Lap:{} Lap count:{}n\r",
+			lap_time.return_minutes(), lap_time.return_seconds(), lap_time.return_miliseconds(),
+			Last.return_minutes(), Last.return_seconds(), Last.return_miliseconds(),
+			Best.return_minutes(), Best.return_seconds(), Best.return_miliseconds(), Laps_tracker);
 }
 void Print_States()
 {
+
+
 
 }
 void Print_No_Safety_front()

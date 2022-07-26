@@ -2,7 +2,7 @@
  * Lap_time_handling.hpp
  *
  *  Created on: Jul 25, 2022
- *      Author: wasyl
+ *      Author: Adam Wasilewski
  */
 
 #ifndef INC_LAP_TIME_HANDLING_HPP_
@@ -13,6 +13,8 @@
 #define FMT_HEADER_ONLY
 #include <fmt/core.h>
 #include <fmt/format-inl.h>
+
+#define INVALID_LAP_TIME  3
 
 class Time{
 	private:
@@ -27,16 +29,13 @@ class Time{
 			miliseconds = 0;
 		}
 		void Update_Time();
-		void Check_best(Time Best, Time Last)
-		{
-
-
-		}
-		void Override_last(Time lap_time, Time Last)
-		{
-
-
-		}
+		void Check_best(Time Best, Time Last);
+		void Override_last(Time lap_time, Time Last);
+		void Reset_time();
+		void Timeout();
+		uint8_t return_minutes(){return minute;}
+		uint8_t return_seconds(){return seconds;}
+		uint16_t return_miliseconds(){return miliseconds;}
 
 };
 void End_Lap();

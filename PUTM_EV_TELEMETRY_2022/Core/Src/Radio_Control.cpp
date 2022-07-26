@@ -46,7 +46,7 @@ bool Send_Data(uint8_t* pData)
 	{
 		Clear_retrasmission_flag();
 		Set_Radio_Warning();
-		return true;
+		return false;
 	}
 }
 /**

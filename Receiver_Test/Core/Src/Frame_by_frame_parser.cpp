@@ -5,7 +5,7 @@
  *      Author: Adam Wasilewski
  */
 
-#include <Parsers.h>
+#include <Parsers.hpp>
 #include "ID's.h"
 //#include "lib/can_interface.hpp"
 
@@ -17,16 +17,20 @@ const uint8_t space1[] = "/";
 
 void TransmitWithSpace(uint16_t data)
 {
+	/*
 	itoa(data, UART_Buffer1, 10);
 	HAL_UART_Transmit(&hlpuart1, UART_Buffer1, strlen(UART_Buffer1), 1000);
 	HAL_UART_Transmit(&hlpuart1, space1, sizeof(space1), 1000);
+	*/
 }
 
 void TransmitWithNewLine(uint16_t data)
 {
+	/*
 	itoa(data, UART_Buffer1, 10);
 	HAL_UART_Transmit(&hlpuart1, UART_Buffer1, strlen(UART_Buffer1), 1000);
 	HAL_UART_Transmit(&hlpuart1, next_line1, sizeof(next_line1), 1000);
+	*/
 }
 
 void Parse(uint8_t *RxData)

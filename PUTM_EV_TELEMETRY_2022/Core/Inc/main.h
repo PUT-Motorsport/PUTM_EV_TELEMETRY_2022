@@ -70,7 +70,8 @@ void Error_Handler(void);
 #define LED_AUX_Pin GPIO_PIN_7
 #define LED_AUX_GPIO_Port GPIOC
 /* USER CODE BEGIN Private defines */
-
+#define RADIO_ERROR 3
+#define RADIO_OUT_OF_RANGE 4
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

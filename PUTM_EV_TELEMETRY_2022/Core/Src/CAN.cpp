@@ -1,14 +1,20 @@
 /*
+ * CAN_Com.cpp
+ *
+ *  Created on: Jul 21, 2022
+ *      Author: wasyl
+ */
+/*
  * CAN.c
  *
  *  Created on: Feb 3, 2022
  *      Author: Adam Wasilewski
  */
-
-#include "CAN.h"
+#include "Data_Handling.hpp"
 
 extern CAN_HandleTypeDef hcan1;
 extern CAN_FilterTypeDef flitr1;
+extern RTC_HandleTypeDef hrtc;
 
 /**
 * @brief Can Initialization

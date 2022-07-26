@@ -1,10 +1,15 @@
 #ifndef INC_DATA_HANDLING_HPP_
 #define INC_DATA_HANDLING_HPP_
 
+//#include "PUTM_EV_CAN_LIBRARY/lib/can_interface.hpp"
 #include "main.h"
-#include "stdio.h"
-#include <cstring>
-#include <stdlib.h>
+
+struct time
+{
+	uint8_t minute;
+	uint8_t seconds;
+	uint16_t miliseconds;
+};
 
 enum struct HeartBeat
 {
@@ -41,6 +46,29 @@ public:
     const uint8_t Buffer2_full = 3;
     const uint8_t Buffer3_full = 255;
 
+
+    enum struct SAFETY_Front{
+    	BSPD,
+		Driver_Kill,
+		EBS,
+		INERTIA,
+		Left_Kill,
+		Overtravel,
+		Right_Kill
+    };
+    enum struct SAFETY_Rear{
+        BSPD,
+    	Driver_Kill,
+   		EBS,
+   		INERTIA,
+   		Left_Kill,
+   		Overtravel,
+		Right_Kill
+    };
+
+    bool Missing_Safety_Front;
+    bool Missing_Safety_Rear;
+
     /* Methods */
 
     void Init();
@@ -58,10 +86,17 @@ public:
     void Clear_msg1();
     void Clear_msg2();
     void Clear_msg3();
+
+    void Pass_States(uint8_t state);
 };
 
 void Send_Frame();
-
 void Cycle_frames();
-
+//CAN.c
+void Open_Filter(void);
+void Close_Filter(void);
+void CAN_Init(void);
+bool Check_Laptimer();
+void Update_Time();
+time return_lap_time();
 #endif

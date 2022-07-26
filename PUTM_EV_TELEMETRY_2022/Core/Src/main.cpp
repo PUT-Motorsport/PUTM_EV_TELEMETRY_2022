@@ -22,10 +22,10 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "CAN.c"
 #include "Data_Handling.hpp"
 #include "LEDs.hpp"
 #include "Radio_Control.hpp"
+#include "etl/Circular_buffer.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,6 +58,7 @@ TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim5;
 TIM_HandleTypeDef htim6;
+TIM_HandleTypeDef htim7;
 
 /* USER CODE BEGIN PV */
 
@@ -75,6 +76,7 @@ static void MX_TIM3_Init(void);
 static void MX_TIM4_Init(void);
 static void MX_TIM5_Init(void);
 static void MX_TIM6_Init(void);
+static void MX_TIM7_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -122,6 +124,7 @@ int main(void)
   MX_TIM4_Init();
   MX_TIM5_Init();
   MX_TIM6_Init();
+  MX_TIM7_Init();
   /* USER CODE BEGIN 2 */
 
     Clear_All();
@@ -136,12 +139,12 @@ int main(void)
     {
         Set_Error();
         Error_Handler();
+        //handler1.Pass_States(RADIO_ERROR);
     }
     else
     {
         Set_OK();
     }
-
     if (Frame_By_Frame == true)
     {
         // HAL_TIM_Base_Start_IT(&htim2);
@@ -149,10 +152,10 @@ int main(void)
     }
     else
     {
-        //HAL_TIM_Base_Start_IT(&htim2);
+        HAL_TIM_Base_Start_IT(&htim2);
         HAL_TIM_Base_Start_IT(&htim3);
         HAL_TIM_Base_Start_IT(&htim4);
-        //HAL_TIM_Base_Start_IT(&htim5);
+        HAL_TIM_Base_Start_IT(&htim5);
         hb1 = HeartBeat::DEFAULT;
     }
   /* USER CODE END 2 */
@@ -178,6 +181,10 @@ int main(void)
                     //HAL_Delay(1);
                     handler1.Clear_msg1();
                 }
+                else
+                {
+                	//handler1.Pass_States(RADIO_OUT_OF_RANGE);
+                }
 
                 if (Send_Data(handler1.Check_AQBuffer()) == true)
                 {
@@ -185,6 +192,10 @@ int main(void)
                     //Send_Data(handler1.return_state2_pointer());
                     //HAL_Delay(1);
                     handler1.Clear_msg2();
+                }
+                else
+                {
+                	//handler1.Pass_States(RADIO_OUT_OF_RANGE);
                 }
                 break;
 
@@ -196,14 +207,31 @@ int main(void)
                     //HAL_Delay(1);
                     handler1.Clear_msg2();
                 }
+                else
+                {
+
+
+                }
                 break;
             case HeartBeat::Buffer3:
-                //Send_Data(handler1.Check_BufferAQ());
+                Send_Data(handler1.Check_BufferTtemps());
                 break;
 
             case HeartBeat::DEFAULT:
                 // TEST:
-
+            	/*
+            	if(Check_Laptimer() == true)
+            	{
+            		uint8_t laptime_array[4];
+            		time send_time = return_lap_time();
+            		laptime_array[0] = 99;
+            		laptime_array[1] = send_time.minute;
+            		laptime_array[2] = send_time.seconds;
+            		laptime_array[3] = uint8_t(send_time.miliseconds >> 8);
+            		laptime_array[4] = uint8_t(send_time.miliseconds);
+            		Send_Data(laptime_array);
+            	}
+            	*/
                 break;
 
             case HeartBeat::FRAME_BY_FRAME:
@@ -494,9 +522,9 @@ static void MX_TIM2_Init(void)
 
   /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 120-1;
+  htim2.Init.Prescaler = 12000-1;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 100;
+  htim2.Init.Period = 10000;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
@@ -586,7 +614,7 @@ static void MX_TIM4_Init(void)
   htim4.Instance = TIM4;
   htim4.Init.Prescaler = 12000-1;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim4.Init.Period = 300;
+  htim4.Init.Period = 200;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
@@ -629,11 +657,11 @@ static void MX_TIM5_Init(void)
 
   /* USER CODE END TIM5_Init 1 */
   htim5.Instance = TIM5;
-  htim5.Init.Prescaler = 0;
+  htim5.Init.Prescaler = 12000-1;
   htim5.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim5.Init.Period = 4294967295;
+  htim5.Init.Period = 300;
   htim5.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim5.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  htim5.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim5) != HAL_OK)
   {
     Error_Handler();
@@ -690,6 +718,44 @@ static void MX_TIM6_Init(void)
   /* USER CODE BEGIN TIM6_Init 2 */
 
   /* USER CODE END TIM6_Init 2 */
+
+}
+
+/**
+  * @brief TIM7 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM7_Init(void)
+{
+
+  /* USER CODE BEGIN TIM7_Init 0 */
+
+  /* USER CODE END TIM7_Init 0 */
+
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM7_Init 1 */
+
+  /* USER CODE END TIM7_Init 1 */
+  htim7.Instance = TIM7;
+  htim7.Init.Prescaler = 120-1;
+  htim7.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim7.Init.Period = 65535;
+  htim7.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
+  if (HAL_TIM_Base_Init(&htim7) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim7, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM7_Init 2 */
+
+  /* USER CODE END TIM7_Init 2 */
 
 }
 

@@ -25,7 +25,6 @@ void CS_UnSelect (void)
 	HAL_GPIO_WritePin(NRF24_CSN_PORT, NRF24_CSN_PIN, GPIO_PIN_SET);
 }
 
-
 void CE_Enable (void)
 {
 	HAL_GPIO_WritePin(NRF24_CE_PORT, NRF24_CE_PIN, GPIO_PIN_SET);

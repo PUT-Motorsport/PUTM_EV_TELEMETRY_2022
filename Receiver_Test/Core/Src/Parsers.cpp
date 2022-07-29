@@ -10,7 +10,7 @@
 #include <fmt/core.h>
 #include <fmt/format-inl.h>
 #include <Lap_time_handling.hpp>
-
+#include "Device_States.hpp"
 
 extern UART_HandleTypeDef hlpuart1;
 extern TIM_HandleTypeDef htim2;
@@ -25,6 +25,7 @@ extern msg66 ms66;
 extern msg67 ms67;
 extern msg68 ms68;
 extern msg70 ms70;
+extern Device_States states;
 
 void Message_65(uint8_t RxData[])
 {
@@ -44,6 +45,7 @@ void Message_65(uint8_t RxData[])
 	ms65.HV_SoC = RxData[13] << 8 | RxData[14];
 	ms65.HV_Temp_max = RxData[15];
 	ms65.HV_Temps = RxData[16];
+
 	//FIXME use fmt.
 	/*
 	auto display65 = fmt::memory_buffer();
@@ -135,6 +137,19 @@ void Message_65(uint8_t RxData[])
 	HAL_UART_Transmit(&hlpuart1, UART_Buffer, 3, 1000);
 	HAL_UART_Transmit(&hlpuart1, next_line2, sizeof(next_line2), 1000);
 	*/
+}
+void States_73(uint8_t RxData[])
+{
+	states.apps = Apps_states(RxData[1]);
+	states.lv = BMS_LV_states(RxData[2]);
+	states.hv = BMS_HV_states(RxData[3]);
+	states.sw = Steering_Wheel_states(RxData[4]);
+	states.sf = SmartFuseState(RxData[5]);
+	states.aq = AQ_states(RxData[6]);
+}
+void States_74(uint8_t RxData[])
+{
+	states.ts = TS_states(RxData[1]);
 }
 bool Message_66(uint8_t RxData[])
 {
@@ -384,9 +399,8 @@ void Message_71(uint8_t RxData[])
 {
 	if(RxData[1] == 0xff)
 	{
-		//TODO: Pass handling.
 		Laps_tracker++;
-		if(Laps_tracker%2 == 0)
+		if(Laps_tracker%2 == 1)
 		{
 			HAL_TIM_Base_Start_IT(&htim2);
 		}

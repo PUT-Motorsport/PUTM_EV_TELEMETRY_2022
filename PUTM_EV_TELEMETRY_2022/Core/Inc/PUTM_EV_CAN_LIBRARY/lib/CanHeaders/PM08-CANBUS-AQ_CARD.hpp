@@ -41,8 +41,8 @@ struct __attribute__ ((packed)) AQ_gyroscope{
 };
 
 struct __attribute__ ((packed)) AQ_ts_button{
+	uint8_t placeholder; //Placeholder field to avoid sending an empty frame
 };
-
 
 const uint16_t AQ_MAIN_CAN_ID = 0x5f;
 const uint8_t AQ_MAIN_CAN_DLC = sizeof(AQ_main);

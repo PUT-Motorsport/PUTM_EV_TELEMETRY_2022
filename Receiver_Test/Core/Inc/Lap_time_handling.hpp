@@ -14,12 +14,11 @@
 #include <fmt/core.h>
 #include <fmt/format-inl.h>
 
-#define INVALID_LAP_TIME  3
-
+#define INVALID_LAP_TIME  2
 class Time{
 	private:
 		uint8_t  minute : 3;
-		uint8_t  seconds : 5;
+		uint8_t  seconds;
 		uint16_t miliseconds : 10;
 	public:
 		Time()

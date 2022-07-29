@@ -16,6 +16,7 @@ enum struct HeartBeat
     Buffer1,
     Buffer2,
     Buffer3,
+	Buffer4,
     DEFAULT,
     FRAME_BY_FRAME
 };
@@ -24,15 +25,16 @@ class Data_management
 {
 private:
     // Buffers containing data and states.
-    uint8_t DataBuffer1[32] = {0};
+    uint8_t DataBufferAPPSLVHV[32] = {0};
     uint8_t DataBufferAQ[32] = {0};
-    uint8_t DataBuffer2[32] = {0};
+    uint8_t DataBufferTC[32] = {0};
     uint8_t DataBufferSFy[32] = {0};
     uint8_t DataBufferTemps[32] = {0};
+    uint8_t DataBufferLowFreq[32] = {0};
     uint8_t DataBufferLapTimer[2] = {0};
 
-    uint8_t StateBuffer1[10] = {0};
-    uint8_t StateBuffer2[10] = {0};
+    uint8_t StateBuffer1_APPSLVHVSFAQ[10] = {0};
+    uint8_t StateBuffer2_TC[10] = {0};
     uint8_t StateBuffer3[10] = {0};
 
 public:
@@ -74,15 +76,16 @@ public:
 
     void Init();
 
-    uint8_t* Check_Buffer1();
-    uint8_t* Check_AQBuffer();
-    uint8_t* Check_Buffer2();
+    uint8_t* Check_DataBufferAPPSLVHV();
+    uint8_t* Check_DataBufferAQ();
+    uint8_t* Check_DataBufferTC();
     uint8_t* Check_BufferSFy();
     uint8_t* Check_BufferTtemps();
+    uint8_t* Check_BufferLowFreq();
     uint8_t* Laptimer_indicator();
 
-    uint8_t* return_state1_pointer() { return StateBuffer1; }
-    uint8_t* return_state2_pointer() { return StateBuffer2; }
+    uint8_t* return_StateBuffer1_APPSLVHVSFAQ_pointer() { return StateBuffer1_APPSLVHVSFAQ; }
+    uint8_t* return_StateBuffer2_TC_pointer() { return StateBuffer2_TC; }
     uint8_t* return_state3_pointer() { return StateBuffer3; }
 
     void Clear_msg1();

@@ -75,7 +75,9 @@ template <typename Device_data_type>
 class __attribute__((packed)) Device : public Device_base {
 public:
   explicit constexpr Device(uint32_t ide)
-      : Device_base(ide, sizeof(Device_data_type)){};
+      : Device_base(ide, sizeof(Device_data_type)){
+        static_assert(sizeof(Device_data_type) <= 8);
+      };
 
   Device_data_type data{};
 

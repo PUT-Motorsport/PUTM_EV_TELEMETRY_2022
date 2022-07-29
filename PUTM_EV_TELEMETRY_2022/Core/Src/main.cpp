@@ -152,10 +152,11 @@ int main(void)
     }
     else
     {
-        HAL_TIM_Base_Start_IT(&htim2);
-        HAL_TIM_Base_Start_IT(&htim3);
-        HAL_TIM_Base_Start_IT(&htim4);
-        HAL_TIM_Base_Start_IT(&htim5);
+        HAL_TIM_Base_Start_IT(&htim2); // Global time timer
+        HAL_TIM_Base_Start_IT(&htim3); // 100Hz timer
+        HAL_TIM_Base_Start_IT(&htim4); // 50Hz timer
+        HAL_TIM_Base_Start_IT(&htim5); // 5Hz timer
+        //HAL_TIM_Base_Start_IT(&htim6); // 1Hz timer
         hb1 = HeartBeat::DEFAULT;
     }
   /* USER CODE END 2 */
@@ -174,23 +175,21 @@ int main(void)
         switch (hb1)
         {
             case HeartBeat::Buffer1:
-                if (Send_Data(handler1.Check_Buffer1()) == true)
+            	//High frequency data:
+                if (Send_Data(handler1.Check_DataBufferAPPSLVHV()) == true)
                 {
-                    HAL_Delay(1);
-                    //Send_Data(handler1.return_state1_pointer());
-                    //HAL_Delay(1);
-                    handler1.Clear_msg1();
+                	handler1.Clear_msg1();
                 }
                 else
                 {
                 	//handler1.Pass_States(RADIO_OUT_OF_RANGE);
                 }
 
-                if (Send_Data(handler1.Check_AQBuffer()) == true)
+                if (Send_Data(handler1.Check_DataBufferAQ()) == true)
                 {
                     HAL_Delay(1);
-                    //Send_Data(handler1.return_state2_pointer());
-                    //HAL_Delay(1);
+                    Send_Data(handler1.return_StateBuffer1_APPSLVHVSFAQ_pointer());
+                    HAL_Delay(1);
                     handler1.Clear_msg2();
                 }
                 else
@@ -198,33 +197,45 @@ int main(void)
                 	//handler1.Pass_States(RADIO_OUT_OF_RANGE);
                 }
                 break;
-
+                //Medium frequency data:
             case HeartBeat::Buffer2:
-                if (Send_Data(handler1.Check_Buffer2()) == true)
+                if (Send_Data(handler1.Check_DataBufferTC()) == true)
                 {
                     HAL_Delay(1);
-                    //Send_Data(handler1.return_state2_pointer());
-                    //HAL_Delay(1);
+                    Send_Data(handler1.return_StateBuffer2_TC_pointer());
+                    HAL_Delay(1);
                     handler1.Clear_msg2();
                 }
                 else
                 {
 
-
                 }
                 break;
+                //Low frequency data:
             case HeartBeat::Buffer3:
-                Send_Data(handler1.Check_BufferTtemps());
-                break;
+                if(Send_Data(handler1.Check_BufferTtemps()) == true)
+                {
 
+                }
+                else
+                {
+                	//handler1.Pass_States(RADIO_OUT_OF_RANGE);
+                }
+
+                break;
+                //Ultra low frequency data:
+            case HeartBeat::Buffer4:
+
+            	break;
+                // When no data needs to be transmitted, check asynchornus data.
             case HeartBeat::DEFAULT:
-                // TEST:
             	if(Check_Laptimer() == true)
             	{
             		Send_Data(handler1.Laptimer_indicator());
+            		Set_CAN_Warning();
             	}
                 break;
-
+                //Frame by frame mode.
             case HeartBeat::FRAME_BY_FRAME:
                 Cycle_frames();
                 HAL_Delay(1);
@@ -558,9 +569,9 @@ static void MX_TIM3_Init(void)
 
   /* USER CODE END TIM3_Init 1 */
   htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 12000-1;
+  htim3.Init.Prescaler = 120-1;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 100;
+  htim3.Init.Period = 10000;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
@@ -603,9 +614,9 @@ static void MX_TIM4_Init(void)
 
   /* USER CODE END TIM4_Init 1 */
   htim4.Instance = TIM4;
-  htim4.Init.Prescaler = 12000-1;
+  htim4.Init.Prescaler = 120-1;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim4.Init.Period = 200;
+  htim4.Init.Period = 20000;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
@@ -648,9 +659,9 @@ static void MX_TIM5_Init(void)
 
   /* USER CODE END TIM5_Init 1 */
   htim5.Instance = TIM5;
-  htim5.Init.Prescaler = 12000-1;
+  htim5.Init.Prescaler = 120-1;
   htim5.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim5.Init.Period = 300;
+  htim5.Init.Period = 30000;
   htim5.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim5.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim5) != HAL_OK)
@@ -692,9 +703,9 @@ static void MX_TIM6_Init(void)
 
   /* USER CODE END TIM6_Init 1 */
   htim6.Instance = TIM6;
-  htim6.Init.Prescaler = 1200-1;
+  htim6.Init.Prescaler = 120-1;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim6.Init.Period = 5000;
+  htim6.Init.Period = 50000;
   htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
   {

@@ -46,16 +46,14 @@ class Can_interface {
       DASH_SMART_FUSES_FAN_SPEED_CAN_ID};
   Device<Dash_steering_wheel_request> dash_steering_request{DASH_STEERING_WHEEL_REQUEST_CAN_ID};
   Device<Dash_lap_finished> dash_lap_finished{DASH_LAP_FINISHED_CAN_ID};
+  Device<Dash_steering_wheel_angle> dash_steering{DASH_STEERING_WHEEL_ANGLE_CAN_ID};
   Device<Lap_timer_Main> laptimer_main{LAP_TIMER_MAIN_CAN_ID};
   Device<Lap_timer_Pass> laptimer_pass{LAP_TIMER_PASS_CAN_ID};
-  Device<SF_safety> sf_safety{SF_SAFETY_CAN_ID};
   Device<SF_main> sf_main{SF_MAIN_CAN_ID};
-  Device<SF_FrontBox> sf_frontbox{SF_FRONTBOX_CAN_ID};
-  Device<SF_CoolingAndVSafety> sf_coolingandvsafety{
-      SF_COOLINGANDVSAFETY_CAN_ID};
-  Device<SF_DV> sf_dv{SF_DV_CAN_ID};
-  Device<SF_WS> sf_ws{SF_WS_CAN_ID};
-  Device<SF_NUCS> sf_nucs{SF_NUCS_CAN_ID};
+  Device<SF_LegendaryDVAndSupply> sf_dv{SF_LEGENDARYDVANDSUPPLY_CAN_ID};
+  Device<SF_Supply> sf_supply{SF_SUPPLY_CAN_ID};
+  Device<SF_PassiveElements> sf_passive{SF_PASSIVEELEMENTS_CAN_ID};
+  Device<SF_safety> sf_safety{SF_SAFETY_CAN_ID};
   Device<Steering_Wheel_main> steering_wheel_main{STEERING_WHEEL_MAIN_CAN_ID};
   Device<Steering_Wheel_event> steering_wheel_event{
       STEERING_WHEEL_EVENT_CAN_ID};
@@ -70,7 +68,7 @@ class Can_interface {
   Device<YawProbe_air_flow> yawprobe_air_flow{YAWPROBE_AIR_FLOW_CAN_ID};
 
 
-  std::array<Device_base *, 33> device_array = {&apps,
+  std::array<Device_base *, 32> device_array = {&apps,
                                                 &aq_main,
                                                 &aq_gyroscope,
                                                 &aq_acceleration,
@@ -83,15 +81,14 @@ class Can_interface {
                                                 &dash_fan_speed,
                                                 &dash_steering_request,
                                                 &dash_lap_finished,
+                                                &dash_steering,
                                                 &laptimer_main,
                                                 &laptimer_pass,
-                                                &sf_safety,
                                                 &sf_main,
-                                                &sf_frontbox,
-                                                &sf_coolingandvsafety,
                                                 &sf_dv,
-                                                &sf_ws,
-                                                &sf_nucs,
+                                                &sf_supply,
+                                                &sf_safety,
+                                                &sf_passive,
                                                 &steering_wheel_main,
                                                 &steering_wheel_event,
                                                 &tc_main,
@@ -138,15 +135,16 @@ public:
   Dash_lap_finished get_dash_lap_finished() {
     return dash_lap_finished.data;
   }
+  Dash_steering_wheel_angle get_dash_steering_wheel_angle() {
+    return dash_steering.data;
+  }
   Lap_timer_Main get_laptimer_main() { return laptimer_main.data; }
   Lap_timer_Pass get_laptimer_pass() { return laptimer_pass.data; }
   SF_safety get_sf_safety() {return sf_safety.data;}
   SF_main get_sf_main() { return sf_main.data; }
-  SF_FrontBox get_sf_frontbox() { return sf_frontbox.data; }
-  SF_CoolingAndVSafety get_sf_cooling() { return sf_coolingandvsafety.data; }
-  SF_DV get_sf_dv() { return sf_dv.data; }
-  SF_WS get_sf_ws() { return sf_ws.data; }
-  SF_NUCS get_sf_nucs() { return sf_nucs.data; }
+  SF_Supply get_sf_supply() { return sf_supply.data; }
+  SF_LegendaryDVAndSupply get_sf_legendary_dv_and_supply() { return sf_dv.data; }
+  SF_PassiveElements get_sf_passive_elements() { return sf_passive.data; }
   Steering_Wheel_main get_steering_wheel_main() {
     return steering_wheel_main.data;
   }
@@ -180,15 +178,16 @@ public:
   bool get_dash_lap_finished_new_data() {
     return dash_lap_finished.get_new_data();
   }
+  bool get_dash_steering_wheel_angle_new_data() {
+    return dash_steering.get_new_data();
+  }
   bool get_laptimer_main_new_data() { return laptimer_main.get_new_data(); }
   bool get_laptimer_pass_new_data() { return laptimer_pass.get_new_data(); }
   bool get_sf_main_new_data() { return sf_main.get_new_data(); }
   bool get_sf_safety_new_data() { return sf_safety.get_new_data(); }
-  bool get_sf_frontbox_new_data() { return sf_frontbox.get_new_data(); }
-  bool get_sf_cooling_new_data() { return sf_coolingandvsafety.get_new_data(); }
-  bool get_sf_dv_new_data() { return sf_dv.get_new_data(); }
-  bool get_sf_ws_new_data() { return sf_ws.get_new_data(); }
-  bool get_sf_nucs_new_data() { return sf_nucs.get_new_data(); }
+  bool get_sf_passive_new_data() {return sf_passive.get_new_data(); }
+  bool get_sf_legendary_dv_and_supply_new_data() {return sf_dv.get_new_data(); }
+  bool get_sf_supply_new_data() {return sf_safety.get_new_data(); }
   bool get_steering_wheel_main_new_data() {
     return steering_wheel_main.get_new_data();
   }

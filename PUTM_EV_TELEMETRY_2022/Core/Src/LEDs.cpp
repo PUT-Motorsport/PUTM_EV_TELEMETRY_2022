@@ -27,7 +27,8 @@ void Clear_Radio_Warning()
 }
 void Set_CAN_Warning()
 {
-	HAL_GPIO_WritePin(GPIOC, LED_AUX_Pin, GPIO_PIN_RESET);
+	//HAL_GPIO_WritePin(GPIOC, LED_AUX_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_TogglePin(GPIOC, LED_AUX_Pin);
 }
 void Clear_CAN_Warning()
 {

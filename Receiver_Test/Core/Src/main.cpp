@@ -44,7 +44,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-UART_HandleTypeDef hlpuart1;
+ UART_HandleTypeDef hlpuart1;
 
 SPI_HandleTypeDef hspi1;
 
@@ -54,6 +54,7 @@ TIM_HandleTypeDef htim2;
 
 uint8_t RxAddress[] = {0xEE, 0xDD, 0xCC, 0xBB, 0xAA};
 uint8_t RxData[32];
+
 uint8_t Frame_by_frame = 0;
 uint8_t Cycle_screens = 0;
 
@@ -66,6 +67,7 @@ msg66 ms66;
 msg67 ms67;
 msg68 ms68;
 msg70 ms70;
+Device_States states;
 
 /* USER CODE END PV */
 
@@ -143,35 +145,51 @@ int main(void)
 				switch(RxData[0])
 				{
 					case 65:
+						//APPS, LV, HV, SW, SF
 						Message_65(RxData);
 						break;
 					case 66:
+						//AQ CARD
 						missing_safety_front = Message_66(RxData);
 						break;
 					case 67:
+						//TC
 						Message_67(RxData);
 						break;
 					case 68:
+						//TC TEMPS
 						Message_68(RxData);
 						break;
 					case 69:
+						//
 						Message_69(RxData);
 						break;
 					case 70:
+						//SF
 						missing_safety_rear = Message_70(RxData);
 						break;
 					case 71:
+						//Lap timer
+						//FIXME: Use bit setting in data bytes to track lap timer passes rather then asynchronus message.
 						Message_71(RxData);
+						break;
+					case 73:
+						//States: APPS, LV, HV, SW, SF, AQ
+						States_73(RxData);
+						break;
+					case 74:
+						//States: TC, Inverter.
+						States_74(RxData);
 						break;
 					default:
 
 						break;
 				}
 			}
+			//Select_Screen(Cycle_screens);
 		}
 		else
 		{
-			//Update_Terminal2();
 			Select_Screen(Cycle_screens);
 		}
 	}
@@ -332,7 +350,7 @@ static void MX_TIM2_Init(void)
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 170-1;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 100000;
+  htim2.Init.Period = 100;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)

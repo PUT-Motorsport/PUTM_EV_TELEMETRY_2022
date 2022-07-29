@@ -22,9 +22,9 @@ enum struct BMS_HV_states: uint8_t {
 struct __attribute__ ((packed)) BMS_HV_main{
 	uint16_t voltage_sum; 
 	int16_t current; 
-	uint16_t soc : 10; // state of charge
 	uint8_t temp_max; 
 	uint8_t temp_avg; // in Celsius
+	uint16_t soc : 10; // state of charge
 	BMS_HV_states device_state : 6; // 
 };
 

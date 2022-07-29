@@ -353,12 +353,12 @@ void NRF24_Receive (uint8_t *data)
 	HAL_SPI_Transmit(NRF24_SPI, &cmdtosend, 1, 100);
 
 	// Receive the payload
-	HAL_SPI_Receive(NRF24_SPI, data, 35, 1000);
+	HAL_SPI_Receive(NRF24_SPI, data, 32, 1000);
 
 	// Unselect the device
 	CS_UnSelect();
 
-	HAL_Delay(1);
+	//HAL_Delay(1);
 
 	cmdtosend = FLUSH_RX;
 	nrfsendCmd(cmdtosend);

@@ -39,6 +39,9 @@ struct __attribute__ ((packed)) Dash_lap_finished{
 	uint32_t time; // total lap time (all sectors) in microseconds
 };
 
+struct __attribute__ ((packed)) Dash_steering_wheel_angle{
+	uint16_t steering_wheel_angle; // Steering wheel angle [0-360] expressed in 11 bits [0-4096]
+};
 
 const uint16_t DASH_MAIN_CAN_ID = 0x64;
 const uint8_t DASH_MAIN_CAN_DLC = sizeof(Dash_Main);
@@ -55,6 +58,9 @@ const uint8_t DASH_STEERING_WHEEL_REQUEST_FREQUENCY = 0;
 const uint16_t DASH_LAP_FINISHED_CAN_ID = 0x7d;
 const uint8_t DASH_LAP_FINISHED_CAN_DLC = sizeof(Dash_lap_finished);
 const uint8_t DASH_LAP_FINISHED_FREQUENCY = 0;
+const uint16_t DASH_STEERING_WHEEL_ANGLE_CAN_ID = 0x8c;
+const uint8_t DASH_STEERING_WHEEL_ANGLE_CAN_DLC = sizeof(Dash_steering_wheel_angle);
+const uint8_t DASH_STEERING_WHEEL_ANGLE_FREQUENCY = 50;
 
 const CAN_TxHeaderTypeDef can_tx_header_DASH_MAIN{
 DASH_MAIN_CAN_ID, 0xFFF, CAN_ID_STD, CAN_RTR_DATA, DASH_MAIN_CAN_DLC, DISABLE};
@@ -70,6 +76,9 @@ DASH_STEERING_WHEEL_REQUEST_CAN_ID, 0xFFF, CAN_ID_STD, CAN_RTR_DATA, DASH_STEERI
 
 const CAN_TxHeaderTypeDef can_tx_header_DASH_LAP_FINISHED{
 DASH_LAP_FINISHED_CAN_ID, 0xFFF, CAN_ID_STD, CAN_RTR_DATA, DASH_LAP_FINISHED_CAN_DLC, DISABLE};
+
+const CAN_TxHeaderTypeDef can_tx_header_DASH_STEERING_WHEEL_ANGLE{
+DASH_STEERING_WHEEL_ANGLE_CAN_ID, 0xFFF, CAN_ID_STD, CAN_RTR_DATA, DASH_STEERING_WHEEL_ANGLE_CAN_DLC, DISABLE};
 
 } //namespace can
 

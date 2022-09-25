@@ -21,6 +21,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include <cstdlib>
 #include <stdlib.h>
 #include <NRF24L01.h>
 #include <Parsers.hpp>
@@ -122,17 +123,23 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		if(isDataAvailable(2) == 1)
+		if(/*isDataAvailable(2) == 1*/ true)
 		{
-			NRF24_Receive(RxData);
+			//NRF24_Receive(RxData);
 			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);
 
-			Frame_by_frame = RxData[10] & RxData[11];
-			if(Frame_by_frame == 0xff)
+			RxData[0] = 65;
+			for(int i = 1; i<32 ; i++)
 			{
-				Parse(RxData);
+				RxData[i] = rand()%100 + 1;
 			}
-			else
+
+			//Frame_by_frame = RxData[10] & RxData[11];
+			//if(Frame_by_frame == 0xff)
+			//{
+				//Parse(RxData);
+			//}
+			//else
 			{
 				switch(RxData[0])
 				{
@@ -165,15 +172,16 @@ int main(void)
 		}
 		if(missing_safety_front == true)
 		{
-			Update_Terminal_No_Safety_front();
+			//Update_Terminal_No_Safety_front();
 		}
 		else if(missing_safety_rear == true)
 		{
-			Update_Terminal_No_Safety_rear();
+			//Update_Terminal_No_Safety_rear();
 		}
 		else
 		{
-			Update_Terminal2();
+			//Update_Terminal2();
+			HAL_Delay(1000);
 			//Select_Screen(Cycle_screens);
 		}
 	}

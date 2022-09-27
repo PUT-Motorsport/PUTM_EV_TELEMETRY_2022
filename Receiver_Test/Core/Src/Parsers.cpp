@@ -12,75 +12,20 @@
 
 extern UART_HandleTypeDef hlpuart1;
 
-uint8_t UART_Buffer[10];
-uint8_t next_line2[] = "\n\r";
-uint8_t space2[] = "/";
-
-static msg65 ms65;
-static msg66 ms66;
-static msg67 ms67;
-static msg68 ms68;
-static msg70 ms70;
+uint8_t buffer[34]{0};
 
 
-uint8_t buffer[35]{0};
-
-
-void Message_65(uint8_t RxData[])
+void Pass(uint8_t RxData[])
 {
 	memcpy(buffer, RxData, 32);
 
-	buffer[33] = '\r';
-	buffer[34] = '\n';
+	buffer[32] = '\r';
+	buffer[33] = '\n';
+
 
 	HAL_UART_Transmit(&hlpuart1, buffer , 34, 10);
 }
-bool Message_66(uint8_t RxData[])
-{
-	memcpy(buffer, RxData, 32);
-
-	buffer[33] = '\r';
-	buffer[34] = '\n';
-
-	HAL_UART_Transmit(&hlpuart1, buffer , 34, 10);
-
-}
-void Message_67(uint8_t RxData[])
-{
-
-}
-
-void Message_68(uint8_t RxData[])
-{
-
-
-}
-void Message_69(uint8_t RxData[])
-{
-
-
-}
-bool Message_70(uint8_t RxData[])
-{
-
-}
-void Update_Terminal_No_Safety_front()
-{
-
-}
-
-void Update_Terminal_No_Safety_rear()
-{
-
-
-
-}
-
-void Update_Terminal()//With twitching
-{
-
-}
-
+/*
 void Update_Terminal2()
 {
 	auto out = fmt::memory_buffer();
@@ -94,3 +39,4 @@ void Update_Terminal2()
 
 	HAL_Delay(10);
 }
+*/

@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
@@ -26,7 +27,6 @@
 #include <NRF24L01.h>
 #include <Parsers.hpp>
 #include <Lap_time_handling.hpp>
-#include <Printer.hpp>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -44,7 +44,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
- UART_HandleTypeDef hlpuart1;
+UART_HandleTypeDef hlpuart1;
 
 SPI_HandleTypeDef hspi1;
 
@@ -54,12 +54,6 @@ TIM_HandleTypeDef htim2;
 
 uint8_t RxAddress[] = {0xEE, 0xDD, 0xCC, 0xBB, 0xAA};
 uint8_t RxData[32];
-uint8_t Frame_by_frame = 0;
-uint8_t Cycle_screens = 0;
-
-bool missing_safety_front = false;
-bool missing_safety_rear = false;
-bool Print_to_Terminal = true;
 
 /* USER CODE END PV */
 
@@ -110,9 +104,9 @@ int main(void)
   MX_LPUART1_UART_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-	NRF24_Init();
-	NRF24_RxMode(RxAddress, 10);
-
+  NRF24_Init();
+  NRF24_RxMode(RxAddress, 10);
+  RxData[1] = 0;
 	//HAL_TIM_Base_Start_IT(&htim2);
   /* USER CODE END 2 */
 
@@ -127,66 +121,20 @@ int main(void)
 		{
 			//NRF24_Receive(RxData);
 			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);
-
+			//test:
 			RxData[0] = 65;
-			for(int i = 1; i<32 ; i++)
+			for(int i = 2; i<32 ; i++)
 			{
 				RxData[i] = rand()%100 + 1;
 			}
-
-			//Frame_by_frame = RxData[10] & RxData[11];
-			//if(Frame_by_frame == 0xff)
-			//{
-				//Parse(RxData);
-			//}
-			//else
-			{
-				switch(RxData[0])
-				{
-					case 65:
-						Message_65(RxData);
-						break;
-					case 66:
-						missing_safety_front = Message_66(RxData);
-						break;
-					case 67:
-						Message_67(RxData);
-						break;
-					case 68:
-						Message_68(RxData);
-						break;
-					case 69:
-						Message_69(RxData);
-						break;
-					case 70:
-						missing_safety_rear = Message_70(RxData);
-						break;
-					case 99:
-						Handle_new_time(RxData);
-						break;
-					default:
-
-						break;
-				}
-			}
-		}
-		if(missing_safety_front == true)
-		{
-			//Update_Terminal_No_Safety_front();
-		}
-		else if(missing_safety_rear == true)
-		{
-			//Update_Terminal_No_Safety_rear();
-		}
-		else
-		{
-			//Update_Terminal2();
-			HAL_Delay(1000);
-			//Select_Screen(Cycle_screens);
+			Pass(RxData);
+			RxData[1]++;
+			HAL_Delay(10);
 		}
 	}
-  /* USER CODE END 3 */
 }
+  /* USER CODE END 3 */
+
 
 /**
   * @brief System Clock Configuration
@@ -271,7 +219,7 @@ static void MX_LPUART1_UART_Init(void)
   {
     Error_Handler();
   }
-  if (HAL_UARTEx_DisableFifoMode(&hlpuart1) != HAL_OK)
+  if (HAL_UARTEx_EnableFifoMode(&hlpuart1) != HAL_OK)
   {
     Error_Handler();
   }
@@ -340,7 +288,7 @@ static void MX_TIM2_Init(void)
 
   /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 17000;
+  htim2.Init.Prescaler = 170;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim2.Init.Period = 10000;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;

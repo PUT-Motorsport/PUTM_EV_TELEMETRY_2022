@@ -70,10 +70,7 @@ enum struct Safety_Front{
 	Overtravel,
 	BSPD
 };
-void Parse(uint8_t *RxData);
-void Update_Terminal();
+void Pass(uint8_t *RxData);
 void Update_Terminal2();
-void Update_Terminal_No_Safety_front();
-void Update_Terminal_No_Safety_rear();
 
 #endif /* INC_PARSERS_H_ */

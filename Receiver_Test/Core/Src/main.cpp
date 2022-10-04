@@ -53,7 +53,7 @@ TIM_HandleTypeDef htim2;
 /* USER CODE BEGIN PV */
 
 uint8_t RxAddress[] = {0xEE, 0xDD, 0xCC, 0xBB, 0xAA};
-uint8_t RxData[32];
+uint8_t RxData[32]{0};
 
 /* USER CODE END PV */
 
@@ -106,7 +106,6 @@ int main(void)
   /* USER CODE BEGIN 2 */
   NRF24_Init();
   NRF24_RxMode(RxAddress, 10);
-  RxData[1] = 0;
 	//HAL_TIM_Base_Start_IT(&htim2);
   /* USER CODE END 2 */
 
@@ -123,12 +122,14 @@ int main(void)
 			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);
 			//test:
 			RxData[0] = 65;
+			/*
 			for(int i = 2; i<32 ; i++)
 			{
 				RxData[i] = rand()%100 + 1;
 			}
-			Pass(RxData);
+			*/
 			RxData[1]++;
+			Pass(RxData);
 			HAL_Delay(10);
 		}
 	}

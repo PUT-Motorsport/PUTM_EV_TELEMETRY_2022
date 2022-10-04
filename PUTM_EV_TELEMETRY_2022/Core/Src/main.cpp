@@ -25,7 +25,7 @@
 #include "Data_Handling.hpp"
 #include "LEDs.hpp"
 #include "Radio_Control.hpp"
-#include "etl/Circular_buffer.h"
+#include "etl/circular_buffer.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

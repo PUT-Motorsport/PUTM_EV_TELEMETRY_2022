@@ -174,7 +174,7 @@ int main(void)
         switch (hb1)
         {
             case HeartBeat::Buffer1:
-                if (Send_Data(handler1.Check_Buffer1()) == true)
+                if (Send_Data(handler1.Check_Buffer100hz()) == true)
                 {
                     HAL_Delay(1);
                     //Send_Data(handler1.return_state1_pointer());
@@ -185,22 +185,10 @@ int main(void)
                 {
                 	//handler1.Pass_States(RADIO_OUT_OF_RANGE);
                 }
-
-                if (Send_Data(handler1.Check_AQBuffer()) == true)
-                {
-                    HAL_Delay(1);
-                    //Send_Data(handler1.return_state2_pointer());
-                    //HAL_Delay(1);
-                    handler1.Clear_msg2();
-                }
-                else
-                {
-                	//handler1.Pass_States(RADIO_OUT_OF_RANGE);
-                }
                 break;
 
             case HeartBeat::Buffer2:
-                if (Send_Data(handler1.Check_Buffer2()) == true)
+                if (Send_Data(handler1.Check_Buffer50hz()) == true)
                 {
                     HAL_Delay(1);
                     //Send_Data(handler1.return_state2_pointer());
@@ -214,7 +202,7 @@ int main(void)
                 }
                 break;
             case HeartBeat::Buffer3:
-                Send_Data(handler1.Check_BufferTtemps());
+                Send_Data(handler1.Check_Buffer10hz());
                 break;
 
             case HeartBeat::DEFAULT:
@@ -232,11 +220,6 @@ int main(void)
             		Send_Data(laptime_array);
             	}
             	*/
-                break;
-
-            case HeartBeat::FRAME_BY_FRAME:
-                Cycle_frames();
-                HAL_Delay(1);
                 break;
         }
     }

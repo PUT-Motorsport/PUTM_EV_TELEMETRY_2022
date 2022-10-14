@@ -31,6 +31,7 @@
 namespace PUTM_CAN {
 
 class Can_interface {
+public:
 
   Device<Apps_main> apps{APPS_MAIN_CAN_ID};
   Device<AQ_main> aq_main{AQ_MAIN_CAN_ID};

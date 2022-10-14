@@ -1,15 +1,7 @@
 #ifndef INC_DATA_HANDLING_HPP_
 #define INC_DATA_HANDLING_HPP_
 
-//#include "PUTM_EV_CAN_LIBRARY/lib/can_interface.hpp"
 #include "main.h"
-
-struct time
-{
-	uint8_t minute;
-	uint8_t seconds;
-	uint16_t miliseconds;
-};
 
 enum struct HeartBeat
 {
@@ -24,64 +16,19 @@ class Data_management
 {
 private:
     // Buffers containing data and states.
-    uint8_t DataBuffer1[32] = {0};
-    uint8_t DataBufferAQ[32] = {0};
-    uint8_t DataBuffer2[32] = {0};
-    uint8_t DataBufferSFy[32] = {0};
-    uint8_t DataBufferTemps[32] = {0};
-
-    uint8_t StateBuffer1[10] = {0};
-    uint8_t StateBuffer2[10] = {0};
-    uint8_t StateBuffer3[10] = {0};
-
+    uint8_t DataBuffer100hz[96] = {0};
+    uint8_t DataBuffer50hz[96] = {0};
+    uint8_t DataBuffer10hz[96] = {0};
+    uint8_t DataBuffer1hz[32] = {0};
 public:
-    // flags used to track arriving frames. Each bit represent corresponding
-    // frame.
-    uint8_t DataBuffer1_flag = 0;
-    uint8_t DataBuffer2_flag = 0;
-    uint8_t DataBuffer3_flag = 0;
-
-    // Const values indicating full state of a buffer.
-    const uint8_t Buffer1_full = 63;
-    const uint8_t Buffer2_full = 3;
-    const uint8_t Buffer3_full = 255;
-
-
-    enum struct SAFETY_Front{
-    	BSPD,
-		Driver_Kill,
-		EBS,
-		INERTIA,
-		Left_Kill,
-		Overtravel,
-		Right_Kill
-    };
-    enum struct SAFETY_Rear{
-        BSPD,
-    	Driver_Kill,
-   		EBS,
-   		INERTIA,
-   		Left_Kill,
-   		Overtravel,
-		Right_Kill
-    };
-
-    bool Missing_Safety_Front;
-    bool Missing_Safety_Rear;
-
     /* Methods */
 
     void Init();
 
-    uint8_t* Check_Buffer1();
-    uint8_t* Check_AQBuffer();
-    uint8_t* Check_Buffer2();
-    uint8_t* Check_BufferSFy();
-    uint8_t* Check_BufferTtemps();
-
-    uint8_t* return_state1_pointer() { return StateBuffer1; }
-    uint8_t* return_state2_pointer() { return StateBuffer2; }
-    uint8_t* return_state3_pointer() { return StateBuffer3; }
+    uint8_t* Check_Buffer100hz();
+    uint8_t* Check_Buffer50hz();
+    uint8_t* Check_Buffer10hz();
+    uint8_t* Check_Buffer1hz();
 
     void Clear_msg1();
     void Clear_msg2();
@@ -98,5 +45,4 @@ void Close_Filter(void);
 void CAN_Init(void);
 bool Check_Laptimer();
 void Update_Time();
-time return_lap_time();
 #endif

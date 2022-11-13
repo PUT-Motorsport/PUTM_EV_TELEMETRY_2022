@@ -16,16 +16,18 @@ class Data_management
 {
 private:
     // Buffers containing data and states.
-    uint8_t DataBuffer100hz[96] = {0};
-    uint8_t DataBuffer50hz[96] = {0};
-    uint8_t DataBuffer10hz[96] = {0};
-    uint8_t DataBuffer1hz[32] = {0};
+    uint8_t DataBuffer100hz[32] = {0};
+    uint8_t DataBufferAq[32] = {0};
+    uint8_t DataBuffer50hz[23] = {0};
+    uint8_t DataBuffer10hz[23] = {0};
+    uint8_t DataBuffer1hz[23] = {0};
 public:
     /* Methods */
 
     void Init();
 
     uint8_t* Check_Buffer100hz();
+    uint8_t* Check_Buffer_Aq();
     uint8_t* Check_Buffer50hz();
     uint8_t* Check_Buffer10hz();
     uint8_t* Check_Buffer1hz();

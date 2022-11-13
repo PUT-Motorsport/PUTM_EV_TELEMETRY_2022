@@ -59,9 +59,6 @@ uint8_t* Data_management::Check_Buffer100hz()
     auto bmslv = PUTM_CAN::can.get_bms_lv_main();
     auto sf = PUTM_CAN::can.get_sf_main();
     auto bmshv = PUTM_CAN::can.get_bms_hv_main();
-    auto aq = PUTM_CAN::can.get_aq_main();
-    auto aq_gyro = PUTM_CAN::can.get_aq_gyroscope();
-    auto aq_acc = PUTM_CAN::can.get_aq_acceleration();
 
     auto *ptr = DataBuffer100hz;
     *ptr = 'A';
@@ -75,91 +72,31 @@ uint8_t* Data_management::Check_Buffer100hz()
     ptr += sizeof(bmshv);
     memcpy(ptr, &sf, sizeof(sf));
     ptr += sizeof(sf);
-    memcpy(ptr, &aq, sizeof(aq));
-    ptr += sizeof(aq);
-    memcpy(ptr, &aq_gyro, sizeof(aq_gyro));
-    ptr += sizeof(aq_gyro);
-    memcpy(ptr, &aq_acc, sizeof(aq_acc));
-    // move data to buffer.
-    // APPS Data:
-    /*
-    DataBuffer1[0] = 'A';
-    DataBuffer1[1] = (uint8_t)(apps.pedal_position);
-    DataBuffer1[2] = (uint8_t)(apps.pedal_position >> 8);
-    DataBuffer1[3] = apps.position_diff;
-    // LV Battery Data:
-    DataBuffer1[4] = (uint8_t)(bmslv.voltage_sum);
-    DataBuffer1[5] = (uint8_t)(bmslv.voltage_sum >> 8);
-    DataBuffer1[6] = bmslv.soc;
-    DataBuffer1[7] = bmslv.temp_avg;
-    DataBuffer1[8] = bmslv.current;
-    //HV Battery Data:
-    DataBuffer1[9]  = (uint8_t)(bmshv.voltage_sum);
-    DataBuffer1[10] = (uint8_t)(bmshv.voltage_sum >> 8);
-    DataBuffer1[11] = (uint8_t)(bmshv.current);
-    DataBuffer1[12] = (uint8_t)(bmshv.current >> 8);
-    DataBuffer1[13] = (uint8_t)(bmshv.soc);
-    DataBuffer1[14] = (uint8_t)(bmshv.soc >> 8);
-    DataBuffer1[15] = bmshv.temp_max;
-    DataBuffer1[16] = bmshv.temp_avg;
-    //Steering Wheel Data:
-    DataBuffer1[17] = (uint8_t)(sw.s_w_a);
-    DataBuffer1[18] = (uint8_t)(sw.s_w_a >> 8);
-    //Smart Fuses Data:
-    DataBuffer1[19] = ((sf.fuses_overall_state.ok << 3) |
-                       (sf.fuses_overall_state.overcurrent << 2) |
-                       (sf.fuses_overall_state.overheat << 1) |
-                       sf.fuses_overall_state.undercurrent);
-    DataBuffer1[20] = (uint8_t)(sf.fuses_overall_state.current);
-    DataBuffer1[21] = (uint8_t)(sf.fuses_overall_state.current >> 8);
-    */
+
     hb1 = HeartBeat::DEFAULT;
     return DataBuffer100hz;
 }
-/*
-uint8_t* Data_management::aq()
+uint8_t* Data_management::Check_Buffer_Aq()
 {
-    /*
-    DataBufferAQ[0] = 'B';
+    auto aq = PUTM_CAN::can.get_aq_main();
+    auto aq_gyro = PUTM_CAN::can.get_aq_gyroscope();
+    auto aq_acc = PUTM_CAN::can.get_aq_acceleration();
 
-    DataBufferAQ[1] = (uint8_t)(aq.suspension_right);
-    DataBufferAQ[2] = (uint8_t)(aq.suspension_right >> 8);
-    DataBufferAQ[3] = (uint8_t)(aq.suspension_left);
-    DataBufferAQ[4] = (uint8_t)(aq.suspension_left >> 8);
+    auto *ptr = DataBufferAq;
+    *ptr = 'B';
+    ptr++;
 
-    DataBufferAQ[5] = (uint8_t)(aq.brake_pressure_front);
-    DataBufferAQ[6] = (uint8_t)(aq.brake_pressure_front >> 8);
-    DataBufferAQ[7] = (uint8_t)(aq.brake_pressure_back);
-    DataBufferAQ[8] = (uint8_t)(aq.brake_pressure_back >> 8);
+	memcpy(ptr, &aq, sizeof(aq));
+	ptr += sizeof(aq);
+	memcpy(ptr, &aq_gyro, sizeof(aq_gyro));
+	ptr += sizeof(aq_gyro);
+	memcpy(ptr, &aq_acc, sizeof(aq_acc));
 
-    DataBufferAQ[9]  = (uint8_t)(aq_gyro.speed_x);
-    DataBufferAQ[10] = (uint8_t)(aq_gyro.speed_x >> 8);
-    DataBufferAQ[11] = (uint8_t)(aq_gyro.speed_y);
-    DataBufferAQ[12] = (uint8_t)(aq_gyro.speed_y >> 8);
-    DataBufferAQ[13] = (uint8_t)(aq_gyro.speed_z);
-    DataBufferAQ[14] = (uint8_t)(aq_gyro.speed_z >> 8);
+    hb1 = HeartBeat::DEFAULT;
+    return DataBufferAq;
 
-    DataBufferAQ[15] = (uint8_t)(aq_acc.acc_x);
-    DataBufferAQ[16] = (uint8_t)(aq_acc.acc_x >> 8);
-    DataBufferAQ[17] = (uint8_t)(aq_acc.acc_y);
-    DataBufferAQ[18] = (uint8_t)(aq_acc.acc_y >> 8);
-    DataBufferAQ[19] = (uint8_t)(aq_acc.acc_z);
-    DataBufferAQ[20] = (uint8_t)(aq_acc.acc_z >> 8);
-
-    uint8_t Safety =
-    		aq.bspd << 6 		  |
-    		aq.driver_kill << 5   |
-			aq.ebs << 4           |
-			aq.inertia << 3 	  |
-			aq.left_kill << 2     |
-			aq.overtravel << 1    |
-			aq.right_kill		  ;
-
-    DataBufferAQ[21] = Safety;
-
-    return DataBufferAQ;
 }
-*/
+
 uint8_t* Data_management::Check_Buffer50hz()
 {
     auto tc_main = PUTM_CAN::can.get_tc_main();
@@ -168,47 +105,20 @@ uint8_t* Data_management::Check_Buffer50hz()
     auto tc_imu_acc = PUTM_CAN::can.get_tc_imu_acc();
     auto tc_imu_gyro = PUTM_CAN::can.get_tc_imu_gyro();
 
-    // move data to buffer.
-    /*
-    DataBuffer2[0] = 'C';
-    DataBuffer2[1] = (uint8_t)(tc_main.vehicle_speed);
-    DataBuffer2[2] = (uint8_t)(tc_main.vehicle_speed >> 8);
-    DataBuffer2[5] = tc_main.motor_current;
-    DataBuffer2[3] = (uint8_t)(tc_main.engine_speed);
-    DataBuffer2[4] = (uint8_t)(tc_main.engine_speed >> 8);
-    DataBuffer2[6] = tc_main.traction_control_enable;
-    DataBuffer2[7] = tc_main.traction_control_intensivity;
+    auto *ptr = DataBuffer100hz;
+    *ptr = 'C';
+    ptr++;
 
-    DataBuffer2[8] = (uint8_t)(tc_sus.adc_susp_left);
-    DataBuffer2[9] = (uint8_t)(tc_sus.adc_susp_left >> 8);
-    DataBuffer2[10] = (uint8_t)(tc_sus.adc_susp_right);
-    DataBuffer2[11] = (uint8_t)(tc_sus.adc_susp_right >> 8);
+    memcpy(ptr, &tc_main, sizeof(tc_main));
+    ptr += sizeof(tc_main);
+    memcpy(ptr, &tc_sus, sizeof(tc_sus));
+    ptr += sizeof(tc_sus);
+    memcpy(ptr, &tc_wheels, sizeof(tc_wheels));
+    ptr += sizeof(tc_wheels);
+    memcpy(ptr, &tc_imu_acc, sizeof(tc_imu_acc));
+    ptr += sizeof(tc_imu_acc);
+    memcpy(ptr, &tc_imu_gyro, sizeof(tc_imu_gyro));
 
-    DataBuffer2[12] = (uint8_t)(tc_wheels.left_front);
-    DataBuffer2[13] = (uint8_t)(tc_wheels.left_front >> 8);
-    DataBuffer2[14] = (uint8_t)(tc_wheels.right_front);
-    DataBuffer2[15] = (uint8_t)(tc_wheels.right_front >> 8);
-    DataBuffer2[16] = (uint8_t)(tc_wheels.left_rear);
-    DataBuffer2[17] = (uint8_t)(tc_wheels.left_rear >> 8);
-    DataBuffer2[18] = (uint8_t)(tc_wheels.right_rear);
-    DataBuffer2[19] = (uint8_t)(tc_wheels.right_rear >> 8);
-
-    DataBuffer2[20] = (uint8_t)(tc_imu_acc.acc_x);
-    DataBuffer2[21] = (uint8_t)(tc_imu_acc.acc_x >> 8);
-    DataBuffer2[22] = (uint8_t)(tc_imu_acc.acc_y);
-    DataBuffer2[23] = (uint8_t)(tc_imu_acc.acc_y >> 8);
-    DataBuffer2[24] = (uint8_t)(tc_imu_acc.acc_z);
-    DataBuffer2[25] = (uint8_t)(tc_imu_acc.acc_z >> 8);
-
-    DataBuffer2[26] = (uint8_t)(tc_imu_gyro.gyro_x);
-    DataBuffer2[27] = (uint8_t)(tc_imu_gyro.gyro_x >> 8);
-    DataBuffer2[28] = (uint8_t)(tc_imu_gyro.gyro_y);
-    DataBuffer2[29] = (uint8_t)(tc_imu_gyro.gyro_y >> 8);
-    DataBuffer2[30] = (uint8_t)(tc_imu_gyro.gyro_z);
-    DataBuffer2[31] = (uint8_t)(tc_imu_gyro.gyro_z >> 8);
-
-    DataBuffer2[32] = DataBuffer2_flag;
-	*/
     hb1 = HeartBeat::DEFAULT;
     return DataBuffer50hz;
 }
@@ -218,16 +128,12 @@ uint8_t* Data_management::Check_Buffer10hz()
 
     auto tc_temps = PUTM_CAN::can.get_tc_temperatures();
 
-    /*
-    DataBuffer2[0] = 'D';
-    DataBuffer2[1] = tc_temps.engine;
-    DataBuffer2[2] = tc_temps.inverter;
-    DataBuffer2[3] = tc_temps.water_pressure_in;
-    DataBuffer2[4] = tc_temps.water_pressure_out;
-    DataBuffer2[5] = tc_temps.water_temp_in;
-    DataBuffer2[6] = tc_temps.water_temp_out;
-    */
+    auto *ptr = DataBuffer10hz;
+    *ptr = 'D';
+    ptr++;
 
+    memcpy(ptr, &tc_temps, sizeof(tc_temps));
+    ptr += sizeof(tc_temps);
 
     return DataBuffer10hz;
 }

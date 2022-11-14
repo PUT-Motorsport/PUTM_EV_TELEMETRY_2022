@@ -135,34 +135,54 @@ uint8_t* Data_management::Check_Buffer10hz()
     memcpy(ptr, &tc_temps, sizeof(tc_temps));
     ptr += sizeof(tc_temps);
 
+
     return DataBuffer10hz;
 }
 uint8_t* Data_management::Check_Buffer1hz()
 {
+	//auto wheel_temp = PUTM_CAN::can.get_
 
 
     return DataBuffer1hz;
 }
-void Data_management::Clear_msg1()
+uint8_t* Data_management::Check_Buffer_Laptimer()
 {
-    memset(DataBuffer100hz, 0, sizeof(DataBuffer100hz));
-}
-void Data_management::Clear_msg2()
-{
-    memset(DataBuffer50hz, 0, sizeof(DataBuffer50hz));
-}
-void Data_management::Clear_msg3()
-{
+	using namespace PUTM_CAN;
 
-}
+	auto *ptr = DataBufferLaptimer;
+	*ptr = 'E';
+	ptr++;
 
-/*
- *
- *
- * Frame by frame
- *
- *
- */
+	if(can.get_laptimer_sector_new_data() == true)
+	{
+		auto sector_time = can.get_laptimer_sector();
+
+		memcpy(ptr, &sector_time, sizeof(sector_time));
+		ptr += sizeof(sector_time);
+	}
+	if(can.get_laptimer_acc_new_data() == true)
+	{
+			auto acc_time = can.get_laptimer_acc_time();
+
+			memcpy(ptr, &acc_time, sizeof(acc_time));
+			ptr += sizeof(acc_time);
+	}
+	if(can.get_laptimer_skidpad_new_data() == true)
+	{
+			auto skidpad_time = can.get_laptimer_skidpad_time();
+
+			memcpy(ptr, &skidpad_time, sizeof(skidpad_time));
+			ptr += sizeof(skidpad_time);
+	}
+	if(can.get_laptimer_laptime_new_dat() == true)
+	{
+			auto lap_time = can.get_laptimer_laptime();
+
+			memcpy(ptr, &lap_time, sizeof(lap_time));
+			ptr += sizeof(lap_time);
+	}
+	return DataBufferLaptimer;
+}
 
 void Send_Global_Time(PUTM_CAN::Telemetry_states state)
 {

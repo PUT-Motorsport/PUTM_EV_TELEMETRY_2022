@@ -21,6 +21,7 @@ private:
     uint8_t DataBuffer50hz[23] = {0};
     uint8_t DataBuffer10hz[23] = {0};
     uint8_t DataBuffer1hz[23] = {0};
+    uint8_t DataBufferLaptimer[32] = {0};
 public:
     /* Methods */
 
@@ -31,6 +32,7 @@ public:
     uint8_t* Check_Buffer50hz();
     uint8_t* Check_Buffer10hz();
     uint8_t* Check_Buffer1hz();
+    uint8_t* Check_Buffer_Laptimer();
 
     void Clear_msg1();
     void Clear_msg2();

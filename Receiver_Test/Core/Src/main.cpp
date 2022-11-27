@@ -116,21 +116,11 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		if(/*isDataAvailable(2) == 1*/ true)
+		if(isDataAvailable(2) == 1)
 		{
-			//NRF24_Receive(RxData);
+			NRF24_Receive(RxData);
 			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);
-			//test:
-			RxData[0] = 65;
-			/*
-			for(int i = 2; i<32 ; i++)
-			{
-				RxData[i] = rand()%100 + 1;
-			}
-			*/
-			RxData[1]++;
 			Pass(RxData);
-			HAL_Delay(10);
 		}
 	}
 }

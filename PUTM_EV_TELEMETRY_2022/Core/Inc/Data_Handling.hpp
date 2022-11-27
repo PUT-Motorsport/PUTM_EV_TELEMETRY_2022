@@ -8,6 +8,7 @@ enum struct HeartBeat
     Buffer1,
     Buffer2,
     Buffer3,
+	Buffer4,
     DEFAULT,
     FRAME_BY_FRAME
 };
@@ -18,9 +19,9 @@ private:
     // Buffers containing data and states.
     uint8_t DataBuffer100hz[32] = {0};
     uint8_t DataBufferAq[32] = {0};
-    uint8_t DataBuffer50hz[23] = {0};
-    uint8_t DataBuffer10hz[23] = {0};
-    uint8_t DataBuffer1hz[23] = {0};
+    uint8_t DataBuffer50hz[32] = {0};
+    uint8_t DataBuffer10hz[32] = {0};
+    uint8_t DataBuffer1hz[32] = {0};
     uint8_t DataBufferLaptimer[32] = {0};
 public:
     /* Methods */
@@ -37,6 +38,7 @@ public:
     void Clear_msg1();
     void Clear_msg2();
     void Clear_msg3();
+    void Clear_time();
 
     void Pass_States(uint8_t state);
 };

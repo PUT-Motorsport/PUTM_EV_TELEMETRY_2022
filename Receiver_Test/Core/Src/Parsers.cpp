@@ -18,10 +18,16 @@ uint8_t buffer[34]{0};
 void Pass(uint8_t RxData[])
 {
 	memcpy(buffer, RxData, 32);
+	if(RxData[0] == 69)
+	{
+		if(RxData[1] > 0)
+		{
+			int a = 78;
+		}
+	}
 
 	buffer[32] = '\r';
 	buffer[33] = '\n';
-
 
 	HAL_UART_Transmit(&hlpuart1, buffer , 34, 10);
 }

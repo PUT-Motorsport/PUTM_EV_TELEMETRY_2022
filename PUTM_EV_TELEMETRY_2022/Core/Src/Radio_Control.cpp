@@ -20,7 +20,7 @@ uint8_t TxAddress[5] = {0xEE,0xDD,0xCC,0xBB,0xAA};
 bool Setup_Radio_As_Transmiter()
 {
 	NRF24_Init();
-	if(NRF24_TxMode(TxAddress, 10) == 1)
+	if(NRF24_TxMode(TxAddress, 20) == 1)
 	{
 		return true;
 	}

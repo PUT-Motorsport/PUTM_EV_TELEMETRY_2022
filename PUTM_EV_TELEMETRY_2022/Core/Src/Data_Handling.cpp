@@ -50,6 +50,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
     {
         hb1 = HeartBeat::Buffer3;
     }
+    if(htim->Instance == TIM6)
+    {
+    	hb1 = HeartBeat::Buffer4;
+    }
     //handler1.Pass_States(uint8_t(PUTM_CAN::Telemetry_states::Gathering_Data));
 }
 uint8_t* Data_management::Check_Buffer100hz()
@@ -59,6 +63,7 @@ uint8_t* Data_management::Check_Buffer100hz()
     auto bmslv = PUTM_CAN::can.get_bms_lv_main();
     auto sf = PUTM_CAN::can.get_sf_main();
     auto bmshv = PUTM_CAN::can.get_bms_hv_main();
+    auto sf_safety = PUTM_CAN::can.get_sf_safety();
 
     auto *ptr = DataBuffer100hz;
     *ptr = 'A';
@@ -71,7 +76,10 @@ uint8_t* Data_management::Check_Buffer100hz()
     memcpy(ptr, &bmshv, sizeof(bmshv));
     ptr += sizeof(bmshv);
     memcpy(ptr, &sf, sizeof(sf));
-    ptr += sizeof(sf);
+    /*
+
+    */
+
 
     hb1 = HeartBeat::DEFAULT;
     return DataBuffer100hz;
@@ -105,7 +113,7 @@ uint8_t* Data_management::Check_Buffer50hz()
     auto tc_imu_acc = PUTM_CAN::can.get_tc_imu_acc();
     auto tc_imu_gyro = PUTM_CAN::can.get_tc_imu_gyro();
 
-    auto *ptr = DataBuffer100hz;
+    auto *ptr = DataBuffer50hz;
     *ptr = 'C';
     ptr++;
 
@@ -138,13 +146,21 @@ uint8_t* Data_management::Check_Buffer10hz()
 
     return DataBuffer10hz;
 }
+
 uint8_t* Data_management::Check_Buffer1hz()
 {
 	//auto wheel_temp = PUTM_CAN::can.get_
+	auto sf_safety = PUTM_CAN::can.get_sf_safety();
 
+	auto *ptr = DataBuffer1hz;
+	*ptr = 'F';
+	ptr++;
+    memcpy(ptr, &sf_safety, sizeof(sf_safety));
+    ptr += sizeof(sf_safety);
 
     return DataBuffer1hz;
 }
+
 uint8_t* Data_management::Check_Buffer_Laptimer()
 {
 	using namespace PUTM_CAN;
@@ -162,24 +178,24 @@ uint8_t* Data_management::Check_Buffer_Laptimer()
 	}
 	if(can.get_laptimer_acc_new_data() == true)
 	{
-			auto acc_time = can.get_laptimer_acc_time();
+		auto acc_time = can.get_laptimer_acc_time();
 
-			memcpy(ptr, &acc_time, sizeof(acc_time));
-			ptr += sizeof(acc_time);
+		memcpy(ptr, &acc_time, sizeof(acc_time));
+		ptr += sizeof(acc_time);
 	}
 	if(can.get_laptimer_skidpad_new_data() == true)
 	{
-			auto skidpad_time = can.get_laptimer_skidpad_time();
+		auto skidpad_time = can.get_laptimer_skidpad_time();
 
-			memcpy(ptr, &skidpad_time, sizeof(skidpad_time));
-			ptr += sizeof(skidpad_time);
+		memcpy(ptr, &skidpad_time, sizeof(skidpad_time));
+		ptr += sizeof(skidpad_time);
 	}
 	if(can.get_laptimer_laptime_new_dat() == true)
 	{
-			auto lap_time = can.get_laptimer_laptime();
+		auto lap_time = can.get_laptimer_laptime();
 
-			memcpy(ptr, &lap_time, sizeof(lap_time));
-			ptr += sizeof(lap_time);
+		memcpy(ptr, &lap_time, sizeof(lap_time));
+		ptr += sizeof(lap_time);
 	}
 	return DataBufferLaptimer;
 }
@@ -205,5 +221,14 @@ void Send_Global_Time(PUTM_CAN::Telemetry_states state)
 	{
     	Error_Handler();
 	}
+}
+void Data_management::Clear_time()
+{
+	memset(DataBufferLaptimer, 0 ,sizeof(DataBufferLaptimer));
+}
+void Data_management::Clear_msg1()
+{
+	memset(DataBuffer100hz, 0 ,sizeof(DataBuffer100hz));
+	memset(DataBufferAq, 0 ,sizeof(DataBufferAq));
 }
 

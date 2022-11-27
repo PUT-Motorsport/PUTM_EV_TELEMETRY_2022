@@ -45,7 +45,7 @@ CAN_RxHeaderTypeDef RxHeader_CAN1;
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
- ADC_HandleTypeDef hadc1;
+ADC_HandleTypeDef hadc1;
 
 CAN_HandleTypeDef hcan1;
 
@@ -138,6 +138,7 @@ int main(void)
     if (Setup_Radio_As_Transmiter() == false)
     {
         Set_Error();
+        Set_All();
         Error_Handler();
         //handler1.Pass_States(RADIO_ERROR);
     }
@@ -145,6 +146,7 @@ int main(void)
     {
         Set_OK();
     }
+
     if (Frame_By_Frame == true)
     {
         // HAL_TIM_Base_Start_IT(&htim2);
@@ -156,6 +158,7 @@ int main(void)
         HAL_TIM_Base_Start_IT(&htim3);
         HAL_TIM_Base_Start_IT(&htim4);
         HAL_TIM_Base_Start_IT(&htim5);
+        HAL_TIM_Base_Start_IT(&htim6);
         hb1 = HeartBeat::DEFAULT;
     }
   /* USER CODE END 2 */
@@ -174,52 +177,35 @@ int main(void)
         switch (hb1)
         {
             case HeartBeat::Buffer1:
-                if (Send_Data(handler1.Check_Buffer100hz()) == true)
-                {
-                    HAL_Delay(1);
-                    //Send_Data(handler1.return_state1_pointer());
-                    //HAL_Delay(1);
-                    handler1.Clear_msg1();
-                }
-                else
-                {
-                	//handler1.Pass_States(RADIO_OUT_OF_RANGE);
-                }
+
+                Send_Data(handler1.Check_Buffer100hz());
+                HAL_Delay(1);
+                Send_Data(handler1.Check_Buffer_Aq());
+                HAL_Delay(1);
+                handler1.Clear_msg1();
                 break;
 
             case HeartBeat::Buffer2:
-                if (Send_Data(handler1.Check_Buffer50hz()) == true)
-                {
-                    HAL_Delay(1);
-                    //Send_Data(handler1.return_state2_pointer());
-                    //HAL_Delay(1);
-                    handler1.Clear_msg2();
-                }
-                else
-                {
 
-
-                }
+                Send_Data(handler1.Check_Buffer50hz());
+                HAL_Delay(1);
                 break;
+
             case HeartBeat::Buffer3:
+
                 Send_Data(handler1.Check_Buffer10hz());
+                HAL_Delay(1);
+                Send_Data(handler1.Check_Buffer_Laptimer());
+                HAL_Delay(1);
                 break;
+
+            case HeartBeat::Buffer4:
+
+            	Send_Data(handler1.Check_Buffer1hz());
+            	HAL_Delay(1);
 
             case HeartBeat::DEFAULT:
-                // TEST:
-            	/*
-            	if(Check_Laptimer() == true)
-            	{
-            		uint8_t laptime_array[4];
-            		time send_time = return_lap_time();
-            		laptime_array[0] = 99;
-            		laptime_array[1] = send_time.minute;
-            		laptime_array[2] = send_time.seconds;
-            		laptime_array[3] = uint8_t(send_time.miliseconds >> 8);
-            		laptime_array[4] = uint8_t(send_time.miliseconds);
-            		Send_Data(laptime_array);
-            	}
-            	*/
+
                 break;
         }
     }
@@ -684,9 +670,9 @@ static void MX_TIM6_Init(void)
 
   /* USER CODE END TIM6_Init 1 */
   htim6.Instance = TIM6;
-  htim6.Init.Prescaler = 1200-1;
+  htim6.Init.Prescaler = 12000-1;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim6.Init.Period = 5000;
+  htim6.Init.Period = 10000;
   htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
   {

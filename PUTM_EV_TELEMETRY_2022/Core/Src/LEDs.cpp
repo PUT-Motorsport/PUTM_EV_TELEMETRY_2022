@@ -14,8 +14,8 @@ void Set_Error()
 }
 void Set_OK()
 {
-	HAL_GPIO_WritePin(GPIOC, LED_RED_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOC, LED_GREEN_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOC, LED_RED_Pin, GPIO_PIN_SET);
 }
 void Set_Radio_Warning()
 {

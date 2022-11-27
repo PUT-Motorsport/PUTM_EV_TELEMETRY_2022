@@ -179,9 +179,9 @@ void NRF24_Init (void)
 	nrf24_WriteReg (RF_SETUP, 0x0E);   // Power= 0db, data rate = 2Mbps
 	//NEW
 	//AutoACK works
-	nrf24_WriteReg(EN_AA, 		0b00000111);  // AutoACK
-	nrf24_WriteReg(SETUP_RETR, 	0b00011111);
-	nrf24_WriteReg (EN_RXADDR, 	0b00000111);
+	//nrf24_WriteReg(EN_AA, 		0b00000111);  // AutoACK
+	//nrf24_WriteReg(SETUP_RETR, 	0b00011111);
+	//nrf24_WriteReg (EN_RXADDR, 	0b00000111);
 	//Activate Features
 	uint8_t CmdToSend    = ACTIVATE;
 	HAL_SPI_Transmit(NRF24_SPI, &CmdToSend,     1, 100);
@@ -205,7 +205,9 @@ uint8_t NRF24_TxMode (uint8_t *Address, uint8_t channel)
 
 	//nrf24_Readreg(CONFIG);
 
-	nrf24_WriteReg (RF_CH, channel);  // select the channel
+	nrf24_WriteReg (RF_CH, 20);  // select the channel
+	//nrf24_WriteReg (RF_SETUP, 7);
+
 
 	nrf24_WriteRegMulti(TX_ADDR, Address, 5);  // Write the TX address
 	nrf24_WriteRegMulti(RX_ADDR_P0, Address, 5);
@@ -283,7 +285,8 @@ void NRF24_RxMode (uint8_t *Address, uint8_t channel)
 
 	nrf24_reset (STATUS);
 
-	nrf24_WriteReg (RF_CH, channel);  // select the channel
+	nrf24_WriteReg (RF_CH, 1);  // select the channel
+	nrf24_WriteReg (RF_SETUP, 7);
 
 	// select data pipe 2
 	uint8_t en_rxaddr = nrf24_ReadReg(EN_RXADDR);

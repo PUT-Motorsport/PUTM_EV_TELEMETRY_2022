@@ -26,6 +26,7 @@
 #include "LEDs.hpp"
 #include "Radio_Control.hpp"
 #include "etl/circular_buffer.h"
+#include <vector>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -195,8 +196,11 @@ int main(void)
 
                 Send_Data(handler1.Check_Buffer10hz());
                 HAL_Delay(1);
-                Send_Data(handler1.Check_Buffer_Laptimer());
-                HAL_Delay(1);
+            	if(handler1.timer_buffer.size() > 0)
+            	{
+            		Send_Data(handler1.timer_buffer.back());
+            		handler1.timer_buffer.pop_back();
+            	}
                 break;
 
             case HeartBeat::Buffer4:

@@ -2,6 +2,8 @@
 #define INC_DATA_HANDLING_HPP_
 
 #include "main.h"
+#include "etl/circular_buffer.h"
+#include <vector>
 
 enum struct HeartBeat
 {
@@ -22,8 +24,12 @@ private:
     uint8_t DataBuffer50hz[32] = {0};
     uint8_t DataBuffer10hz[32] = {0};
     uint8_t DataBuffer1hz[32] = {0};
-    uint8_t DataBufferLaptimer[32] = {0};
+    uint8_t DataBufferTimeAcc[32] = {0};
+    uint8_t DataBufferTimeSkidpad[32] = {0};
+    uint8_t DataBufferTimeSector[32] = {0};
+    uint8_t DataBufferTimeLap[32] = {0};
 public:
+    std::vector<uint8_t*> timer_buffer;
     /* Methods */
 
     void Init();
@@ -33,7 +39,7 @@ public:
     uint8_t* Check_Buffer50hz();
     uint8_t* Check_Buffer10hz();
     uint8_t* Check_Buffer1hz();
-    uint8_t* Check_Buffer_Laptimer();
+    void Check_Buffer_Laptimer();
 
     void Clear_msg1();
     void Clear_msg2();

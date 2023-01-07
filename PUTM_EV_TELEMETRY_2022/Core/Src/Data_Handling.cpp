@@ -161,43 +161,49 @@ uint8_t* Data_management::Check_Buffer1hz()
     return DataBuffer1hz;
 }
 
-uint8_t* Data_management::Check_Buffer_Laptimer()
+void Data_management::Check_Buffer_Laptimer()
 {
 	using namespace PUTM_CAN;
 
-	auto *ptr = DataBufferLaptimer;
-	*ptr = 'E';
-	ptr++;
-
 	if(can.get_laptimer_sector_new_data() == true)
 	{
+		/*
 		auto sector_time = can.get_laptimer_sector();
 
 		memcpy(ptr, &sector_time, sizeof(sector_time));
 		ptr += sizeof(sector_time);
+		*/
 	}
 	if(can.get_laptimer_acc_new_data() == true)
 	{
+		auto *ptr = DataBufferTimeAcc;
+		*ptr = 'E';
+		ptr++;
+
 		auto acc_time = can.get_laptimer_acc_time();
 
 		memcpy(ptr, &acc_time, sizeof(acc_time));
 		ptr += sizeof(acc_time);
+
+		timer_buffer.push_back(ptr);
 	}
 	if(can.get_laptimer_skidpad_new_data() == true)
 	{
+		/*
 		auto skidpad_time = can.get_laptimer_skidpad_time();
 
 		memcpy(ptr, &skidpad_time, sizeof(skidpad_time));
 		ptr += sizeof(skidpad_time);
+		*/
 	}
 	if(can.get_laptimer_laptime_new_dat() == true)
-	{
+	{	/*
 		auto lap_time = can.get_laptimer_laptime();
 
 		memcpy(ptr, &lap_time, sizeof(lap_time));
 		ptr += sizeof(lap_time);
+		*/
 	}
-	return DataBufferLaptimer;
 }
 
 void Send_Global_Time(PUTM_CAN::Telemetry_states state)
@@ -224,7 +230,7 @@ void Send_Global_Time(PUTM_CAN::Telemetry_states state)
 }
 void Data_management::Clear_time()
 {
-	memset(DataBufferLaptimer, 0 ,sizeof(DataBufferLaptimer));
+	//memset(DataBufferLaptimer, 0 ,sizeof(DataBufferLaptimer));
 }
 void Data_management::Clear_msg1()
 {

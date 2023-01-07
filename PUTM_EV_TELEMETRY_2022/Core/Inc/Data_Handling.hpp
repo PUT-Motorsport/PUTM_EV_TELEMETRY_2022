@@ -28,6 +28,7 @@ private:
     uint8_t DataBufferTimeSkidpad[32] = {0};
     uint8_t DataBufferTimeSector[32] = {0};
     uint8_t DataBufferTimeLap[32] = {0};
+
 public:
     std::vector<uint8_t*> timer_buffer;
     /* Methods */

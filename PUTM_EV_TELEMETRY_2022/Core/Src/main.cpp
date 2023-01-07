@@ -183,21 +183,25 @@ int main(void)
                 HAL_Delay(1);
                 Send_Data(handler1.Check_Buffer_Aq());
                 HAL_Delay(1);
-                handler1.Clear_msg1();
+                //handler1.Clear_msg1();
+
                 break;
 
             case HeartBeat::Buffer2:
 
                 Send_Data(handler1.Check_Buffer50hz());
                 HAL_Delay(1);
+
                 break;
 
             case HeartBeat::Buffer3:
 
                 Send_Data(handler1.Check_Buffer10hz());
                 HAL_Delay(1);
+                handler1.Check_Buffer_Laptimer();
             	if(handler1.timer_buffer.size() > 0)
             	{
+            		uint8_t tmp[32] = {*(handler1.timer_buffer.back())};
             		Send_Data(handler1.timer_buffer.back());
             		handler1.timer_buffer.pop_back();
             	}

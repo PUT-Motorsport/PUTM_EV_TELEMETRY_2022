@@ -33,7 +33,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
     // Send state and time frame
     if (htim->Instance == TIM2)
     {
-       Send_Global_Time(PUTM_CAN::Telemetry_states::Transmitting);
+      // Send_Global_Time(PUTM_CAN::Telemetry_states::Transmitting);
     }
     // HIGH_SPEED_DATA HeartBeat
     if (htim->Instance == TIM3)
@@ -176,16 +176,24 @@ void Data_management::Check_Buffer_Laptimer()
 	}
 	if(can.get_laptimer_acc_new_data() == true)
 	{
-		auto *ptr = DataBufferTimeAcc;
-		*ptr = 'E';
-		ptr++;
+		/*
+		*DataBufferTimeAcc_ptr = 'E';
+		DataBufferTimeAcc_ptr++;
 
 		auto acc_time = can.get_laptimer_acc_time();
 
-		memcpy(ptr, &acc_time, sizeof(acc_time));
-		ptr += sizeof(acc_time);
+		memcpy(DataBufferTimeAcc_ptr, &acc_time, sizeof(acc_time));
+		DataBufferTimeAcc_ptr += sizeof(acc_time);
 
-		timer_buffer.push_back(ptr);
+		*/
+
+		auto acc_time = can.get_laptimer_acc_time();
+
+		DataBufferTimeAcc[0] = 'E';
+		DataBufferTimeAcc[2] = static_cast<uint8_t>((acc_time.Acc_Time & 0xFF00) >> 8);
+		DataBufferTimeAcc[1] = static_cast<uint8_t>(acc_time.Acc_Time & 0x00FF);
+
+		timer_buffer.push_back(DataBufferTimeAcc);
 	}
 	if(can.get_laptimer_skidpad_new_data() == true)
 	{
@@ -205,7 +213,7 @@ void Data_management::Check_Buffer_Laptimer()
 		*/
 	}
 }
-
+/*
 void Send_Global_Time(PUTM_CAN::Telemetry_states state)
 {
 	RTC_TimeTypeDef time1;
@@ -237,4 +245,4 @@ void Data_management::Clear_msg1()
 	memset(DataBuffer100hz, 0 ,sizeof(DataBuffer100hz));
 	memset(DataBufferAq, 0 ,sizeof(DataBufferAq));
 }
-
+*/

@@ -18,7 +18,7 @@ uint8_t buffer[34]{0};
 void Pass(uint8_t RxData[])
 {
 	memcpy(buffer, RxData, 32);
-	if(RxData[0] == 69)
+	if(RxData[0] == 'E')
 	{
 		if(RxData[1] > 0)
 		{

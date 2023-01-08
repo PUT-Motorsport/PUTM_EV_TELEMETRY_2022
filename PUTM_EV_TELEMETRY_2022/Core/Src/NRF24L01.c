@@ -176,12 +176,11 @@ void NRF24_Init (void)
 	nrf24_WriteReg (SETUP_AW, 0x03);  // 5 Bytes for the TX/RX address
 	nrf24_WriteReg (SETUP_RETR, 0);   // No retransmission
 	nrf24_WriteReg (RF_CH, 0);  // will be setup during Tx or RX
-	nrf24_WriteReg (RF_SETUP, 0x0E);   // Power= 0db, data rate = 2Mbps
-	//NEW
+	nrf24_WriteReg (RF_SETUP, 0b00001001);   // Power= 0db, data rate = 2Mbps //B8
 	//AutoACK works
-	//nrf24_WriteReg(EN_AA, 		0b00000111);  // AutoACK
-	//nrf24_WriteReg(SETUP_RETR, 	0b00011111);
-	//nrf24_WriteReg (EN_RXADDR, 	0b00000111);
+	nrf24_WriteReg(EN_AA, 		0b00000111);  // AutoACK
+	nrf24_WriteReg(SETUP_RETR, 	0b00011111);
+	nrf24_WriteReg (EN_RXADDR, 	0b00000111);
 	//Activate Features
 	uint8_t CmdToSend    = ACTIVATE;
 	HAL_SPI_Transmit(NRF24_SPI, &CmdToSend,     1, 100);
@@ -206,7 +205,7 @@ uint8_t NRF24_TxMode (uint8_t *Address, uint8_t channel)
 	//nrf24_Readreg(CONFIG);
 
 	nrf24_WriteReg (RF_CH, 1);  // select the channel
-	nrf24_WriteReg (RF_SETUP, 7);
+	//nrf24_WriteReg (RF_SETUP, 7);
 
 	nrf24_WriteRegMulti(TX_ADDR, Address, 5);  // Write the TX address
 	nrf24_WriteRegMulti(RX_ADDR_P0, Address, 5);
@@ -214,6 +213,7 @@ uint8_t NRF24_TxMode (uint8_t *Address, uint8_t channel)
 
 	// power up the device
 	uint8_t config = nrf24_ReadReg(CONFIG);
+	config = config | (1<<2);
 	config = config | (1<<1);   // write 1 in the PWR_UP bit
 	config = config & (0xF2);    // write 0 in the PRIM_RX, and 1 in the PWR_UP, and all other bits are masked
 	nrf24_WriteReg (CONFIG, config);

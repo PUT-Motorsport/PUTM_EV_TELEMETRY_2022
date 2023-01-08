@@ -19,11 +19,11 @@ void Set_OK()
 }
 void Set_Radio_Warning()
 {
-	HAL_GPIO_WritePin(GPIOC, LED_ORANGE_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOC, LED_RED_Pin, GPIO_PIN_RESET);
 }
 void Clear_Radio_Warning()
 {
-	HAL_GPIO_WritePin(GPIOC, LED_ORANGE_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOC, LED_RED_Pin, GPIO_PIN_SET);
 }
 void Set_CAN_Warning()
 {

@@ -176,7 +176,7 @@ void NRF24_Init (void)
 	nrf24_WriteReg (SETUP_AW, 0x03);  // 5 Bytes for the TX/RX address
 	nrf24_WriteReg (SETUP_RETR, 0);   // No retransmission
 	nrf24_WriteReg (RF_CH, 0);  // will be setup during Tx or RX
-	nrf24_WriteReg (RF_SETUP, 0b00001001);   // Power= 0db, data rate = 2Mbps //B8
+	nrf24_WriteReg (RF_SETUP, 0b00000001);   // Power= 0db, data rate = 2Mbps //B8
 	//AutoACK works
 	nrf24_WriteReg(EN_AA, 		0b00000111);  // AutoACK
 	nrf24_WriteReg(SETUP_RETR, 	0b00011111);
@@ -241,6 +241,7 @@ void Clear_retrasmission_flag()
 }
 uint8_t NRF24_Transmit (uint8_t *data1)
 {
+	uint8_t test[32] = {*data1};
 	uint8_t cmdtosend = 0;
 	uint8_t tell_me = 0;
 	// select the device
